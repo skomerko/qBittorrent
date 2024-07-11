@@ -91,6 +91,7 @@ Required by:
     font-size: 12px;
     margin: 0;
     padding: 0;
+    user-select: none;
 }
 
 #desktopNavbar > ul > li {
@@ -377,6 +378,7 @@ div.toolbox.divider {
 td.speedLabel {
     cursor: pointer;
     min-width: 18em;
+    user-select: none;
 }
 
 .speedLabel img {
