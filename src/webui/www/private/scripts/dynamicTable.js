@@ -1432,8 +1432,7 @@ window.qBittorrent.DynamicTable ??= (() => {
                 }
             }
 
-            const trackerHashInt = Number.parseInt(trackerHash, 10);
-            switch (trackerHashInt) {
+            switch (trackerHash) {
                 case TRACKERS_ALL:
                     break; // do nothing
                 case TRACKERS_TRACKERLESS:
@@ -1441,7 +1440,7 @@ window.qBittorrent.DynamicTable ??= (() => {
                         return false;
                     break;
                 default: {
-                    const tracker = trackerList.get(trackerHashInt);
+                    const tracker = trackerList.get(trackerHash);
                     if (tracker) {
                         let found = false;
                         for (const torrents of tracker.trackerTorrentMap.values()) {
@@ -1505,7 +1504,7 @@ window.qBittorrent.DynamicTable ??= (() => {
                 : null;
 
             for (let i = 0; i < rows.length; ++i) {
-                if (this.applyFilter(rows[i], selected_filter, selected_category, selectedTag, selectedTracker, filterTerms)) {
+                if (this.applyFilter(rows[i], selectedFilter, selectedCategory, selectedTag, selectedTracker, filterTerms)) {
                     filteredRows.push(rows[i]);
                     filteredRows[rows[i].rowId] = rows[i];
                 }

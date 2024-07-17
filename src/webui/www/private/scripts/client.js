@@ -126,7 +126,7 @@ const CATEGORIES_UNCATEGORIZED = 2;
 
 const category_list = new Map();
 
-let selected_category = Number(LocalPreferences.get("selected_category", CATEGORIES_ALL));
+let selectedCategory = Number(LocalPreferences.get("selected_category", CATEGORIES_ALL));
 let setCategoryFilter = function() {};
 
 /* Tags filter */
@@ -145,12 +145,12 @@ const TRACKERS_TRACKERLESS = 2;
 /** @type Map<number, {host: string, trackerTorrentMap: Map<string, string[]>}> **/
 const trackerList = new Map();
 
-let selectedTracker = LocalPreferences.get("selected_tracker", TRACKERS_ALL);
+let selectedTracker = Number(LocalPreferences.get("selected_tracker", TRACKERS_ALL));
 let setTrackerFilter = function() {};
 
 /* All filters */
-let selected_filter = LocalPreferences.get("selected_filter", "all");
-let setFilter = function() {};
+let selectedFilter = LocalPreferences.get("selected_filter", "all");
+let setStatusFilter = function() {};
 let toggleFilterDisplay = function() {};
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -231,52 +231,32 @@ window.addEventListener("DOMContentLoaded", () => {
     buildLogTab();
     MochaUI.initializeTabs("mainWindowTabsList");
 
+    setStatusFilter = function(name) {
+        selectedFilter = name;
+        highlightSelectedStatus();
+        LocalPreferences.set("selected_filter", name);
+        updateMainData();
+    };
+
     setCategoryFilter = function(hash) {
-        selected_category = hash;
-        LocalPreferences.set("selected_category", selected_category);
+        selectedCategory = hash;
         highlightSelectedCategory();
-        if (typeof torrentsTable.tableBody !== "undefined")
-            updateMainData();
+        LocalPreferences.set("selected_category", hash);
+        updateMainData();
     };
 
     setTagFilter = function(hash) {
         selectedTag = hash;
-        LocalPreferences.set("selected_tag", selectedTag);
         highlightSelectedTag();
-        if (torrentsTable.tableBody !== undefined)
-            updateMainData();
+        LocalPreferences.set("selected_tag", hash);
+        updateMainData();
     };
 
     setTrackerFilter = function(hash) {
-        selectedTracker = hash.toString();
-        LocalPreferences.set("selected_tracker", selectedTracker);
+        selectedTracker = hash;
         highlightSelectedTracker();
-        if (torrentsTable.tableBody !== undefined)
-            updateMainData();
-    };
-
-    setFilter = function(f) {
-        // Visually Select the right filter
-        $("all_filter").removeClass("selectedFilter");
-        $("downloading_filter").removeClass("selectedFilter");
-        $("seeding_filter").removeClass("selectedFilter");
-        $("completed_filter").removeClass("selectedFilter");
-        $("stopped_filter").removeClass("selectedFilter");
-        $("running_filter").removeClass("selectedFilter");
-        $("active_filter").removeClass("selectedFilter");
-        $("inactive_filter").removeClass("selectedFilter");
-        $("stalled_filter").removeClass("selectedFilter");
-        $("stalled_uploading_filter").removeClass("selectedFilter");
-        $("stalled_downloading_filter").removeClass("selectedFilter");
-        $("checking_filter").removeClass("selectedFilter");
-        $("moving_filter").removeClass("selectedFilter");
-        $("errored_filter").removeClass("selectedFilter");
-        $(f + "_filter").addClass("selectedFilter");
-        selected_filter = f;
-        LocalPreferences.set("selected_filter", f);
-        // Reload torrents
-        if (typeof torrentsTable.tableBody !== "undefined")
-            updateMainData();
+        LocalPreferences.set("selected_tracker", hash);
+        updateMainData();
     };
 
     toggleFilterDisplay = function(filter) {
@@ -302,7 +282,7 @@ window.addEventListener("DOMContentLoaded", () => {
         loadMethod: "xhr",
         contentURL: "views/filters.html",
         onContentLoaded: function() {
-            setFilter(selected_filter);
+            highlightSelectedStatus();
         },
         column: "filtersColumn",
         height: 300
@@ -451,6 +431,13 @@ window.addEventListener("DOMContentLoaded", () => {
         updateFilter("errored", "QBT_TR(Errored (%1))QBT_TR[CONTEXT=StatusFilterWidget]");
     };
 
+    const highlightSelectedStatus = function() {
+        const statusFilter = document.getElementById("statusFilterList");
+        const filterID = `${selectedFilter}_filter`;
+        for (const status of statusFilter.children)
+            status.classList.toggle("selectedFilter", status.id === filterID);
+    };
+
     const updateCategoryList = function() {
         const categoryList = $("categoryFilterList");
         if (!categoryList)
@@ -527,16 +514,9 @@ window.addEventListener("DOMContentLoaded", () => {
     };
 
     const highlightSelectedCategory = function() {
-        const categoryList = $("categoryFilterList");
-        if (!categoryList)
-            return;
-        const children = categoryList.childNodes;
-        for (let i = 0; i < children.length; ++i) {
-            if (Number(children[i].id) === selected_category)
-                children[i].className = "selectedFilter";
-            else
-                children[i].className = "";
-        }
+        const categoryList = document.getElementById("categoryFilterList");
+        for (const category of categoryList.children)
+            category.classList.toggle("selectedFilter", Number(category.id) === selectedCategory);
     };
 
     const updateTagList = function() {
@@ -582,13 +562,9 @@ window.addEventListener("DOMContentLoaded", () => {
     };
 
     const highlightSelectedTag = function() {
-        const tagFilterList = $("tagFilterList");
-        if (!tagFilterList)
-            return;
-
-        const children = tagFilterList.childNodes;
-        for (let i = 0; i < children.length; ++i)
-            children[i].className = (Number(children[i].id) === selectedTag) ? "selectedFilter" : "";
+        const tagFilterList = document.getElementById("tagFilterList");
+        for (const tag of tagFilterList.children)
+            tag.classList.toggle("selectedFilter", Number(tag.id) === selectedTag);
     };
 
     // getHost emulate the GUI version `QString getHost(const QString &url)`
@@ -623,7 +599,7 @@ window.addEventListener("DOMContentLoaded", () => {
         trackerFilterList.getChildren().each(c => c.destroy());
 
         const createLink = function(hash, text, count) {
-            const html = '<span class="link" href="#" onclick="setTrackerFilter(' + hash + ');return false;">'
+            const html = `<span class="link" href="#" onclick="setTrackerFilter(${hash});return false;">`
                 + '<img src="images/trackers.svg"/>'
                 + window.qBittorrent.Misc.escapeHtml(text.replace("%1", count)) + "</span>";
             const el = new Element("li", {
@@ -666,13 +642,9 @@ window.addEventListener("DOMContentLoaded", () => {
     };
 
     const highlightSelectedTracker = function() {
-        const trackerFilterList = $("trackerFilterList");
-        if (!trackerFilterList)
-            return;
-
-        const children = trackerFilterList.childNodes;
-        for (const child of children)
-            child.className = (child.id === selectedTracker) ? "selectedFilter" : "";
+        const trackerFilterList = document.getElementById("trackerFilterList");
+        for (const tracker of trackerFilterList.children)
+            tracker.classList.toggle("selectedFilter", Number(tracker.id) === selectedTracker);
     };
 
     const setupCopyEventHandler = (function() {
