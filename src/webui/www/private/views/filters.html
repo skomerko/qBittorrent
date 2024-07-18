@@ -1,5 +1,5 @@
 <div class="filterWrapper">
-    <span class="filterTitle" onclick="toggleFilterDisplay('status');">
+    <span class="filterTitle">
         <img src="images/go-down.svg" alt="QBT_TR(Collapse/expand)QBT_TR[CONTEXT=TransferListFiltersWidget]">QBT_TR(Status)QBT_TR[CONTEXT=TransferListFiltersWidget]
     </span>
     <ul class="filterList" id="statusFilterList">
@@ -20,21 +20,21 @@
     </ul>
 </div>
 <div class="filterWrapper">
-    <span class="filterTitle" onclick="toggleFilterDisplay('category');">
+    <span class="filterTitle">
         <img src="images/go-down.svg" alt="QBT_TR(Collapse/expand)QBT_TR[CONTEXT=TransferListFiltersWidget]">QBT_TR(Categories)QBT_TR[CONTEXT=TransferListFiltersWidget]
     </span>
     <ul class="filterList" id="categoryFilterList">
     </ul>
 </div>
 <div class="filterWrapper">
-    <span class="filterTitle" onclick="toggleFilterDisplay('tag');">
+    <span class="filterTitle">
         <img src="images/go-down.svg" alt="QBT_TR(Collapse/expand)QBT_TR[CONTEXT=TransferListFiltersWidget]">QBT_TR(Tags)QBT_TR[CONTEXT=TransferListFiltersWidget]
     </span>
     <ul class="filterList" id="tagFilterList">
     </ul>
 </div>
 <div class="filterWrapper">
-    <span class="filterTitle" onclick="toggleFilterDisplay('tracker');">
+    <span class="filterTitle">
         <img src="images/go-down.svg" alt="QBT_TR(Collapse/expand)QBT_TR[CONTEXT=TransferListFiltersWidget]">QBT_TR(Trackers)QBT_TR[CONTEXT=TransferListFiltersWidget]
     </span>
     <ul class="filterList" id="trackerFilterList">
@@ -181,6 +181,15 @@
                     break;
             }
             event.stopImmediatePropagation();
+        });
+
+        document.getElementById("Filters_pad").addEventListener("click", (event) => {
+            const filterTitle = event.target.closest(".filterTitle");
+            if (!filterTitle)
+                return;
+
+            const filterList = filterTitle.nextElementSibling.id.replace("FilterList", "");
+            toggleFilterDisplay(filterList);
         });
 
         return exports();
