@@ -1192,6 +1192,7 @@ window.addEventListener("DOMContentLoaded", () => {
         hideSearchTab();
         hideRssTab();
         hideLogTab();
+        MochaUI.Desktop.resizePanels();
 
         LocalPreferences.set("selected_window_tab", "transfers");
     };
@@ -1228,6 +1229,7 @@ window.addEventListener("DOMContentLoaded", () => {
             hideTransfersTab();
             hideRssTab();
             hideLogTab();
+            MochaUI.Desktop.resizePanels();
 
             LocalPreferences.set("selected_window_tab", "search");
         };
@@ -1255,6 +1257,7 @@ window.addEventListener("DOMContentLoaded", () => {
             hideTransfersTab();
             hideSearchTab();
             hideLogTab();
+            MochaUI.Desktop.resizePanels();
 
             LocalPreferences.set("selected_window_tab", "rss");
         };
@@ -1293,6 +1296,7 @@ window.addEventListener("DOMContentLoaded", () => {
             hideTransfersTab();
             hideSearchTab();
             hideRssTab();
+            MochaUI.Desktop.resizePanels();
 
             LocalPreferences.set("selected_window_tab", "log");
         };
@@ -1300,8 +1304,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const hideLogTab = function() {
         $("logTabColumn").addClass("invisible");
-        MochaUI.Desktop.resizePanels();
         window.qBittorrent.Log && window.qBittorrent.Log.unload();
+        MochaUI.Desktop.resizePanels();
     };
 
     const addSearchPanel = function() {

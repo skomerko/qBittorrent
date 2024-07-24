@@ -55,7 +55,6 @@ Required by:
     font-size: 12px;
     font-weight: bold;
     line-height: 15px;
-    margin: 0;
     padding: 5px 10px 4px 12px;
 }
 
@@ -277,7 +276,7 @@ div.mochaToolbarWrapper.bottom {
 }
 
 .modal2 .mochaContentBorder {
-    border-width: 0px;
+    border-width: 0;
 }
 
 /* Window Themes */
@@ -309,7 +308,7 @@ div.mochaToolbarWrapper.bottom {
 }
 
 .mocha.notification .mochaContentBorder {
-    border-width: 0px;
+    border-width: 0;
 }
 
 .mocha.notification .mochaContentWrapper {

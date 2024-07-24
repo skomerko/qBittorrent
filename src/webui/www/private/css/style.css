@@ -16,6 +16,11 @@
     --color-background-hover: hsl(26deg 80% 60%);
     --color-border-blue: hsl(210deg 42% 48%);
     --color-border-default: hsl(0deg 0% 85%);
+    --color-border-1: hsl(0deg 0% 90%);
+    --transition-props: color, background-color, border-color,
+        text-decoration-color, fill, stroke, -webkit-text-decoration-color;
+    --transition-duration: 100ms;
+    --transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 
     color-scheme: light dark;
 }
@@ -32,13 +37,14 @@
     :root {
         --color-accent-blue: hsl(210deg 42% 48%);
         --color-text-blue: hsl(210deg 88.1% 73.5%);
-        --color-text-orange: hsl(26deg 65% 70%);
+        --color-text-orange: hsl(39deg 100% 72%);
         --color-text-default: hsl(0deg 0% 90%);
         --color-background-blue: hsl(210deg 42% 48%);
         --color-background-popup: hsl(0deg 0% 20%);
         --color-background-default: hsl(0deg 0% 25%);
         --color-background-hover: hsl(26deg 50% 55%);
         --color-border-default: hsl(0deg 0% 33%);
+        --color-border-1: hsl(0deg 0% 24%);
 
         color-scheme: dark;
     }
@@ -46,10 +52,41 @@
 
 /* Reset */
 
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+* {
+    margin: 0;
+}
+
+input,
+button,
+select {
+    font: inherit;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    overflow-wrap: break-word;
+}
+
 a img,
 :link img,
 :visited img {
     border: none;
+}
+
+ul,
+ol {
+    list-style: none;
 }
 
 /* Forms */
@@ -61,28 +98,48 @@ input[type="button"],
 button,
 select {
     border: 1px solid var(--color-border-default);
-    border-radius: 3px;
+    border-radius: 2px;
     color: var(--color-text-default);
+    font-size: 12px;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="password"],
+input[type="button"],
+button {
+    padding: 3px;
+}
+
+select {
     padding: 4px;
 }
 
 input[type="checkbox"],
 input[type="radio"] {
     accent-color: var(--color-accent-blue);
+    margin: 3px 3px 3px 4px;
 }
 
 input[type="button"],
 input[type="submit"],
 button {
     cursor: pointer;
-    padding: 4px 16px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
+input:disabled,
+select:disabled,
+textarea:disabled,
 button:disabled {
-    cursor: initial;
+    cursor: not-allowed;
 }
 
-/*table { border-collapse: collapse; border-spacing: 0; }*/
+input:hover::placeholder,
+textarea:hover::placeholder {
+  color: hsl(45deg 5% 69%);
+}
 
 :focus {
     outline: none;
@@ -94,8 +151,7 @@ body {
     color: var(--color-text-default);
     font-family: Arial, Helvetica, sans-serif;
     font-size: 12px;
-    line-height: 18px;
-    margin: 0;
+    line-height: 1.5;
     text-align: left;
 }
 
@@ -114,7 +170,6 @@ h3,
 h4 {
     font-size: 12px;
     font-weight: bold;
-    margin: 0;
     padding: 0 0 5px;
 }
 
@@ -155,14 +210,12 @@ a:hover {
 }
 
 p {
-    margin: 0;
     padding: 0 0 9px;
 }
 
 /* List Elements */
 
 ul {
-    list-style: outside;
     margin: 0 0 9px 16px;
 }
 
@@ -178,7 +231,8 @@ dd {
 
 fieldset {
     border: 1px solid var(--color-border-default);
-    border-radius: 5px;
+    border-radius: 1px;
+    margin: 0 2px;
 }
 
 /* Code */
@@ -200,9 +254,10 @@ pre {
 
 hr {
     background-color: var(--color-background-default);
-    border: 0px;
+    border: 0;
     color: var(--color-text-default);
     height: 1px;
+    margin-bottom: 6px;
 }
 
 .vcenter {
@@ -215,12 +270,10 @@ hr {
 }
 
 #trackersUrls {
+    display: block;
     height: 100%;
+    margin: 0 auto 10px;
     width: 90%;
-}
-
-#Filters ul {
-    list-style-type: none;
 }
 
 #Filters ul li {
@@ -229,8 +282,6 @@ hr {
 
 #Filters ul img {
     height: 16px;
-    padding: 0 4px;
-    vertical-align: middle;
     width: 16px;
 }
 
@@ -248,10 +299,9 @@ hr {
 }
 
 a.propButton {
-    border: 1px solid rgb(85 81 91);
+    border: 1px solid hsl(264deg 6% 34%);
     margin-left: 3px;
     margin-right: 3px;
-    /*border-radius: 3px;*/
     padding: 2px;
 }
 
@@ -269,7 +319,6 @@ a.propButton img {
     background-color: var(--color-background-default);
     border: 1px solid var(--color-border-default);
     display: none;
-    list-style-type: none;
     padding: 0;
 }
 
@@ -278,15 +327,13 @@ a.propButton img {
 }
 
 .contextMenu li {
-    margin: 0;
     padding: 0;
 }
 
 .contextMenu li a {
     color: var(--color-text-default);
-    display: block;
-    font-family: Tahoma, Arial, sans-serif;
-    font-size: 12px;
+    display: flex;
+    gap: 2px;
     padding: 5px 20px 5px 5px;
     text-decoration: none;
     white-space: nowrap;
@@ -309,7 +356,6 @@ a.propButton img {
     background: var(--color-background-default);
     border: 1px solid var(--color-border-default);
     left: -999em;
-    list-style-type: none;
     margin: -29px 0 0 100%;
     padding: 0;
     position: absolute;
@@ -340,7 +386,6 @@ a.propButton img {
 
 .contextMenu li img {
     height: 16px;
-    margin-bottom: -4px;
     margin-right: 0.5em; /* return missed padding */
     width: 16px;
 }
@@ -387,7 +432,6 @@ a.propButton img {
     height: 7px;
     left: 0;
     line-height: 1px;
-    margin: 0;
     overflow: hidden;
     padding: 0;
     position: absolute;
@@ -435,9 +479,7 @@ a.propButton img {
 }
 
 .MyMenuIcon {
-    margin-bottom: -3px;
-    margin-left: -18px;
-    padding-right: 5px;
+    margin: 0 5px -3px -18px;
 }
 
 #mainWindowTabs {
@@ -459,7 +501,7 @@ a.propButton img {
     border: 1px solid var(--color-border-default);
     border-radius: 3px;
     min-width: 160px;
-    padding: 4px 4px 4px 25px;
+    padding: 2px 12px 2px 25px;
 }
 
 #torrentsFilterRegexBox {
@@ -503,8 +545,11 @@ a.propButton img {
     background-position: left;
     background-repeat: no-repeat;
     background-size: 1.5em;
+    margin-top: -1px;
+    padding-bottom: 1px;
     padding-left: 2em;
-    width: 160px;
+    padding-top: 1px;
+    width: 190px;
 }
 
 /* Tri-state checkbox */
@@ -514,7 +559,7 @@ label.tristate {
     display: block;
     float: left;
     height: 13px;
-    margin: 0.15em 8px 5px 0px;
+    margin: 0.15em 8px 5px 0;
     overflow: hidden;
     text-indent: -999em;
     width: 13px;
@@ -530,8 +575,7 @@ label.partial {
 
 fieldset.settings {
     border: 1px solid var(--color-border-default);
-    border-radius: 8px;
-    padding: 4px 4px 4px 10px;
+    padding: 4px 4px 6px 6px;
 }
 
 fieldset.settings legend {
@@ -554,20 +598,23 @@ div.formRow {
 }
 
 .filterTitle {
-    display: block;
+    display: flex;
     font-weight: bold;
+    gap: 3px;
     overflow: hidden;
-    padding-left: 5px;
-    padding-top: 5px;
+    padding: 4px 0 4px 6px;
     text-overflow: ellipsis;
     text-transform: uppercase;
     white-space: nowrap;
 }
 
+.filterTitle:hover {
+    cursor: pointer;
+}
+
 .filterTitle img {
     height: 16px;
-    margin-bottom: -3px;
-    padding: 0 5px;
+    padding: 2px;
     width: 16px;
 }
 
@@ -582,11 +629,13 @@ ul.filterList {
 
 ul.filterList a,
 ul.filterList span.link {
-    color: var(--color-text-default);
+    align-items: center;
+    color: inherit;
     cursor: pointer;
-    display: block;
+    display: flex;
+    gap: 5px;
     overflow: hidden;
-    padding: 4px 6px;
+    padding: 3px 7px;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
@@ -629,6 +678,10 @@ td.generalLabel {
     padding: 2px;
 }
 
+#prop_general hr {
+    display: none;
+}
+
 .piecesbarWrapper {
     position: relative;
     width: 100%;
@@ -653,28 +706,28 @@ td.generalLabel {
 }
 
 .select-watched-folder-editable {
-    border: solid grey 1px;
-    height: 20px;
+    border: 1px solid var(--color-border-default);
+    height: 22px;
     position: relative;
     width: 160px;
 }
 
 .select-watched-folder-editable select {
     border: none;
-    bottom: 0px;
-    left: 0px;
-    margin: 0;
+    bottom: 0;
+    left: 0;
+    padding: 0;
     position: absolute;
-    top: 0px;
-    width: 160px;
+    top: 0;
+    width: 158px;
 }
 
 .select-watched-folder-editable input {
     border: none;
-    left: 0px;
-    padding: 1px;
+    left: 0;
+    padding: 0;
     position: absolute;
-    top: 0px;
+    top: 0;
     width: 140px;
 }
 
@@ -693,6 +746,7 @@ td.generalLabel {
 
 .combo_priority {
     font-size: 1em;
+    padding: 2px 6px;
 }
 
 td.statusBarSeparator {
@@ -700,12 +754,41 @@ td.statusBarSeparator {
     background-position: center 1px;
     background-repeat: no-repeat;
     background-size: 2px 18px;
-    width: 22px;
+    width: 24px;
 }
 
 /* Statistics window */
+#statisticsContent > table {
+    background-color: var(--color-background-default);
+    border-radius: 6px;
+    margin-bottom: 6px;
+    padding: 6px 10px;
+}
+
+#statisticsContent h3 {
+    color: var(--color-text-default);
+    padding-left: 3px;
+}
+
 .statisticsValue {
     text-align: right;
+}
+
+/* About */
+#aboutpage_overlay .mochaContent {
+    margin-top: 10px;
+}
+
+#aboutAboutContent > div > img {
+    margin-right: 5px;
+}
+
+#aboutAboutContent > img {
+    margin-right: 8px;
+}
+
+#qbittorrentVersion {
+    margin-bottom: 5px;
 }
 
 /* Search tab */

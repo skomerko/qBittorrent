@@ -8,10 +8,6 @@
     background-color: var(--color-background-default);
 }
 
-#transferList .dynamicTable td {
-    padding: 4px 2px;
-}
-
 .dynamicTableDiv table.dynamicTable tbody tr.selected {
     background-color: var(--color-background-blue);
     color: var(--color-text-white);
@@ -44,15 +40,12 @@ tr.dynamicTableHeader {
 }
 
 .dynamicTable th {
-    border-right: 1px solid var(--color-border-default);
-    box-sizing: border-box;
-    padding: 4px 2px;
-    white-space: nowrap;
+    border-right: 1px solid var(--color-border-1);
+    padding: 3px;
 }
 
 .dynamicTable td {
-    padding: 4px 2px;
-    white-space: nowrap;
+    padding: 3px 2px;
 }
 
 .dynamicTable th,
@@ -64,9 +57,9 @@ tr.dynamicTableHeader {
 
 .dynamicTable th.sorted {
     background-image: url("../images/go-up.svg");
-    background-position: right;
+    background-position: right 3px center;
     background-repeat: no-repeat;
-    background-size: 15px;
+    background-size: 12px;
 }
 
 .dynamicTable th.sorted.reverse {
@@ -82,13 +75,40 @@ tr.dynamicTableHeader {
     overflow: hidden;
 }
 
+#logMessageTableFixedHeaderDiv,
+#prop_webseeds,
+#torrentTrackersTableFixedHeaderDiv,
+#torrentPeersTableFixedHeaderDiv,
+#torrentFilesTableFixedHeaderDiv,
+#torrentsTableFixedHeaderDiv {
+    border-bottom: 1px solid var(--color-border-1);
+    border-left: 1px solid var(--color-border-1);
+    border-right: 1px solid var(--color-border-1);
+}
+
+#torrentsTableFixedHeaderDiv {
+    border-left: transparent;
+}
+
+#searchResultsTableFixedHeaderDiv,
+#logMessageTableFixedHeaderDiv {
+    border: 1px solid var(--color-border-1);
+}
+
+#rssArticleFixedHeaderDiv,
+#rssFeedFixedHeaderDiv {
+    border-bottom: 1px solid var(--color-border-1);
+    border-left: 1px solid var(--color-border-1);
+    border-top: 1px solid var(--color-border-1);
+}
+
 .dynamicTableDiv {
     overflow: auto;
 }
 
 .dynamicTableDiv thead th {
-    height: 0px !important;
-    line-height: 0px !important;
-    padding-bottom: 0px !important;
-    padding-top: 0px !important;
+    height: 0 !important;
+    line-height: 0 !important;
+    padding-bottom: 0 !important;
+    padding-top: 0 !important;
 }

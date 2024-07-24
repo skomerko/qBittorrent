@@ -208,7 +208,7 @@ const initializeWindows = function() {
             paddingVertical: 0,
             paddingHorizontal: 0,
             width: 424,
-            height: 80
+            height: 100
         });
     };
 
@@ -226,7 +226,7 @@ const initializeWindows = function() {
                 paddingVertical: 0,
                 paddingHorizontal: 0,
                 width: 424,
-                height: 80
+                height: 100
             });
         }
     };
@@ -266,7 +266,7 @@ const initializeWindows = function() {
                 paddingVertical: 0,
                 paddingHorizontal: 0,
                 width: 424,
-                height: 200
+                height: 220
             });
         }
     };
@@ -341,7 +341,7 @@ const initializeWindows = function() {
             paddingVertical: 0,
             paddingHorizontal: 0,
             width: 424,
-            height: 80
+            height: 100
         });
     };
 
@@ -354,8 +354,8 @@ const initializeWindows = function() {
             contentURL: new URI("views/statistics.html").toString(),
             maximizable: false,
             padding: 10,
-            width: loadWindowWidth(id, 275),
-            height: loadWindowHeight(id, 370),
+            width: loadWindowWidth(id, 310),
+            height: loadWindowHeight(id, 415),
             onResize: function() {
                 saveWindowSize(id);
             }
@@ -376,7 +376,7 @@ const initializeWindows = function() {
                 paddingVertical: 0,
                 paddingHorizontal: 0,
                 width: 424,
-                height: 80
+                height: 100
             });
         }
     };
@@ -1160,7 +1160,7 @@ const initializeWindows = function() {
             toolbar: true,
             toolbarURL: "views/aboutToolbar.html",
             padding: 10,
-            width: loadWindowWidth(id, 550),
+            width: loadWindowWidth(id, 570),
             height: loadWindowHeight(id, 360),
             onResize: function() {
                 saveWindowSize(id);

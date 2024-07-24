@@ -1,10 +1,16 @@
 <style type="text/css">
+    #LogPanel_wrapper {
+        height: inherit;
+    }
+
     #logTopBar {
         margin-top: 1em;
     }
 
     #logFilterBar {
-        margin: .5em 0;
+        align-items: center;
+        display: flex;
+        gap: 2px;
     }
 
     #logFilterBar>label {
@@ -14,8 +20,7 @@
 
     #logFilterBar>button {
         display: inline-block;
-        padding: 4px 15px;
-        margin-left: .3em;
+        padding: 2px 12px;
     }
 
     #logView {
@@ -38,9 +43,9 @@
         background-repeat: no-repeat;
         background-position: left;
         background-size: 1.5em;
-        padding: 4px 5px 4px 2em;
+        padding: 2px 12px 2px 25px;
         margin-left: .3em;
-        width: 200px;
+        width: 237px;
         border: 1px solid var(--color-border-default);
         border-radius: 3px;
     }
@@ -73,7 +78,7 @@
     }
 
     .vsb-main>button {
-        padding: 4px 12px !important;
+        padding: 2px 12px !important;
     }
 
     .contextMenu>li>a>img {

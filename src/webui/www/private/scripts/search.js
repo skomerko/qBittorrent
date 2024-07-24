@@ -167,7 +167,7 @@ window.qBittorrent.Search ??= (() => {
             src: "images/application-exit.svg",
             width: "8",
             height: "8",
-            style: "padding-right: 7px; margin-bottom: -1px; margin-left: -5px",
+            style: "margin: 0 7px -1px -5px",
             onclick: "qBittorrent.Search.closeSearchTab(event, this);",
         });
         closeTabElem.inject(tabElem, "top");

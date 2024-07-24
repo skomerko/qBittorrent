@@ -132,7 +132,7 @@ window.qBittorrent.PropPeers ??= (() => {
                     paddingVertical: 0,
                     paddingHorizontal: 0,
                     width: 350,
-                    height: 240
+                    height: 250
                 });
             },
             banPeer: function(element, ref) {

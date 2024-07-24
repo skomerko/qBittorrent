@@ -24,6 +24,15 @@
         float: left;
     }
 
+    #centerRssDownloaderColumn div.formRow,
+    #centerRssDownloaderColumn table.fullWidth {
+        margin-bottom: 5px;
+    }
+
+    #centerRssDownloaderColumn hr {
+        display: none;
+    }
+
     #rightRssDownloaderColumn {
         width: 25%;
         float: left;
@@ -32,7 +41,6 @@
     .fullWidth {
         width: 100%;
         max-width: none;
-        box-sizing: border-box;
     }
 
     .noWrap {
@@ -64,7 +72,7 @@
     }
 
     #rssDownloaderDisabled {
-        color: red;
+        color: var(--color-text-red);
         font-style: italic;
         margin-bottom: 10px;
     }
@@ -76,7 +84,7 @@
     }
 
     #ignoreDaysValue {
-        width: 4em;
+        width: 5em;
     }
 
     #lastMatchDiv {
@@ -564,7 +572,7 @@ Supports the formats: S01E01, 1x1, 2017.12.31 and 31.12.2017 (Date formats also 
                 resizable: false,
                 maximizable: false,
                 width: 360,
-                height: 80
+                height: 100
             });
         };
 
