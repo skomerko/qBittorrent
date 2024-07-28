@@ -158,10 +158,7 @@ const initializeWindows = function() {
             title: "QBT_TR(Options)QBT_TR[CONTEXT=OptionsDialog]",
             loadMethod: "xhr",
             toolbar: true,
-            contentURL: new URI("views/preferences.html").toString(),
-            require: {
-                css: ["css/Tabs.css"]
-            },
+            contentURL: "views/preferences.html",
             toolbarURL: "views/preferencesToolbar.html",
             maximizable: false,
             closable: true,
@@ -1159,10 +1156,7 @@ const initializeWindows = function() {
             id: id,
             title: "QBT_TR(About qBittorrent)QBT_TR[CONTEXT=AboutDialog]",
             loadMethod: "xhr",
-            contentURL: new URI("views/about.html").toString(),
-            require: {
-                css: ["css/Tabs.css"]
-            },
+            contentURL: "views/about.html",
             toolbar: true,
             toolbarURL: "views/aboutToolbar.html",
             padding: 10,
