@@ -239,21 +239,21 @@ window.addEventListener("DOMContentLoaded", () => {
     };
 
     setCategoryFilter = function(hash) {
-        selectedCategory = hash;
+        selectedCategory = Number(hash);
         highlightSelectedCategory();
         LocalPreferences.set("selected_category", hash);
         updateMainData();
     };
 
     setTagFilter = function(hash) {
-        selectedTag = hash;
+        selectedTag = Number(hash);
         highlightSelectedTag();
         LocalPreferences.set("selected_tag", hash);
         updateMainData();
     };
 
     setTrackerFilter = function(hash) {
-        selectedTracker = hash;
+        selectedTracker = Number(hash);
         highlightSelectedTracker();
         LocalPreferences.set("selected_tracker", hash);
         updateMainData();
@@ -453,7 +453,7 @@ window.addEventListener("DOMContentLoaded", () => {
                 margin_left = (category_path.length - 1) * 20;
             }
 
-            const html = `<span class="link" href="#" style="margin-left: ${margin_left}px;" onclick="setCategoryFilter(${hash}); return false;">`
+            const html = `<span class="link" style="margin-left: ${margin_left}px;">`
                 + '<img src="images/view-categories.svg"/>'
                 + window.qBittorrent.Misc.escapeHtml(display_name) + " (" + count + ")" + "</span>";
             const el = new Element("li", {
@@ -527,7 +527,7 @@ window.addEventListener("DOMContentLoaded", () => {
         tagFilterList.getChildren().each(c => c.destroy());
 
         const createLink = function(hash, text, count) {
-            const html = `<span class="link" href="#" onclick="setTagFilter(${hash}); return false;">`
+            const html = '<span class="link">'
                 + '<img src="images/tags.svg"/>'
                 + window.qBittorrent.Misc.escapeHtml(text) + " (" + count + ")" + "</span>";
             const el = new Element("li", {
@@ -599,7 +599,7 @@ window.addEventListener("DOMContentLoaded", () => {
         trackerFilterList.getChildren().each(c => c.destroy());
 
         const createLink = function(hash, text, count) {
-            const html = `<span class="link" href="#" onclick="setTrackerFilter(${hash});return false;">`
+            const html = '<span class="link">'
                 + '<img src="images/trackers.svg"/>'
                 + window.qBittorrent.Misc.escapeHtml(text.replace("%1", count)) + "</span>";
             const el = new Element("li", {
