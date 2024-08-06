@@ -458,6 +458,7 @@ window.addEventListener("DOMContentLoaded", () => {
                 + window.qBittorrent.Misc.escapeHtml(display_name) + " (" + count + ")" + "</span>";
             const el = new Element("li", {
                 id: hash,
+                ...((selectedCategory === Number(hash) && { class: "selectedFilter" })),
                 html: html
             });
             window.qBittorrent.Filters.categoriesFilterContextMenu.addTarget(el);
@@ -509,8 +510,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
             categoryList.appendChild(create_link(categoryHash, categoryName, categoryCount));
         }
-
-        highlightSelectedCategory();
     };
 
     const highlightSelectedCategory = function() {
@@ -532,6 +531,7 @@ window.addEventListener("DOMContentLoaded", () => {
                 + window.qBittorrent.Misc.escapeHtml(text) + " (" + count + ")" + "</span>";
             const el = new Element("li", {
                 id: hash,
+                ...((selectedTag === Number(hash) && { class: "selectedFilter" })),
                 html: html
             });
             window.qBittorrent.Filters.tagsFilterContextMenu.addTarget(el);
@@ -557,8 +557,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
         for (const { tagName, tagHash, tagSize } of sortedTags)
             tagFilterList.appendChild(createLink(tagHash, tagName, tagSize));
-
-        highlightSelectedTag();
     };
 
     const highlightSelectedTag = function() {
@@ -604,6 +602,7 @@ window.addEventListener("DOMContentLoaded", () => {
                 + window.qBittorrent.Misc.escapeHtml(text.replace("%1", count)) + "</span>";
             const el = new Element("li", {
                 id: hash,
+                ...((selectedTracker === Number(hash) && { class: "selectedFilter" })),
                 html: html
             });
             window.qBittorrent.Filters.trackersFilterContextMenu.addTarget(el);
@@ -637,8 +636,6 @@ window.addEventListener("DOMContentLoaded", () => {
         sortedList.sort((left, right) => window.qBittorrent.Misc.naturalSortCollator.compare(left.trackerHost, right.trackerHost));
         for (const { trackerHost, trackerHash, trackerCount } of sortedList)
             trackerFilterList.appendChild(createLink(trackerHash, (trackerHost + " (%1)"), trackerCount));
-
-        highlightSelectedTracker();
     };
 
     const highlightSelectedTracker = function() {
