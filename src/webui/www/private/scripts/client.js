@@ -458,10 +458,9 @@ window.addEventListener("DOMContentLoaded", () => {
                 + window.qBittorrent.Misc.escapeHtml(display_name) + " (" + count + ")" + "</span>";
             const el = new Element("li", {
                 id: hash,
-                ...((selectedCategory === Number(hash) && { class: "selectedFilter" })),
+                class: `categoriesFilterContextMenuTarget ${ (selectedCategory === Number(hash)) ? "selectedFilter" : "" }`,
                 html: html
             });
-            window.qBittorrent.Filters.categoriesFilterContextMenu.addTarget(el);
             return el;
         };
 
@@ -510,6 +509,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
             categoryList.appendChild(create_link(categoryHash, categoryName, categoryCount));
         }
+
+        window.qBittorrent.Filters.categoriesFilterContextMenu.searchAndAddTargets();
     };
 
     const highlightSelectedCategory = function() {
@@ -531,10 +532,9 @@ window.addEventListener("DOMContentLoaded", () => {
                 + window.qBittorrent.Misc.escapeHtml(text) + " (" + count + ")" + "</span>";
             const el = new Element("li", {
                 id: hash,
-                ...((selectedTag === Number(hash) && { class: "selectedFilter" })),
+                class: `tagsFilterContextMenuTarget ${ (selectedTag === Number(hash)) ? "selectedFilter" : "" }`,
                 html: html
             });
-            window.qBittorrent.Filters.tagsFilterContextMenu.addTarget(el);
             return el;
         };
 
@@ -557,6 +557,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
         for (const { tagName, tagHash, tagSize } of sortedTags)
             tagFilterList.appendChild(createLink(tagHash, tagName, tagSize));
+
+        window.qBittorrent.Filters.tagsFilterContextMenu.searchAndAddTargets();
     };
 
     const highlightSelectedTag = function() {
@@ -602,10 +604,9 @@ window.addEventListener("DOMContentLoaded", () => {
                 + window.qBittorrent.Misc.escapeHtml(text.replace("%1", count)) + "</span>";
             const el = new Element("li", {
                 id: hash,
-                ...((selectedTracker === Number(hash) && { class: "selectedFilter" })),
+                class: `trackersFilterContextMenuTarget ${ (selectedTracker === Number(hash)) ? "selectedFilter" : "" }`,
                 html: html
             });
-            window.qBittorrent.Filters.trackersFilterContextMenu.addTarget(el);
             return el;
         };
 
@@ -636,6 +637,8 @@ window.addEventListener("DOMContentLoaded", () => {
         sortedList.sort((left, right) => window.qBittorrent.Misc.naturalSortCollator.compare(left.trackerHost, right.trackerHost));
         for (const { trackerHost, trackerHash, trackerCount } of sortedList)
             trackerFilterList.appendChild(createLink(trackerHash, (trackerHost + " (%1)"), trackerCount));
+
+        window.qBittorrent.Filters.trackersFilterContextMenu.searchAndAddTargets();
     };
 
     const highlightSelectedTracker = function() {
