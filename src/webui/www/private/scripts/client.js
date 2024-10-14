@@ -1648,6 +1648,22 @@ window.addEventListener("DOMContentLoaded", () => {
             }
         }
     });
+
+    window.addEventListener("keydown", (e) => {
+        const dialogWindow = window.MUI.getWindowWithHighestZindex();
+        // make sure dialog window is still in the DOM
+        if (!document.getElementById(dialogWindow?.id))
+            return;
+
+        switch (e.key) {
+            case "Enter":
+                dialogWindow.querySelector(".confirmButton")?.click();
+                break;
+            case "Escape":
+                window.qBittorrent.Client.closeWindow(dialogWindow.id);
+                break;
+        }
+    });
 });
 
 window.addEventListener("load", () => {

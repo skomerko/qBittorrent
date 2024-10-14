@@ -42,7 +42,7 @@ window.qBittorrent ??= {};
 window.qBittorrent.Dialog ??= (() => {
     const exports = () => {
         return {
-            baseModalOptions: baseModalOptions
+            baseWindowOptions: baseWindowOptions
         };
     };
 
@@ -68,12 +68,22 @@ window.qBittorrent.Dialog ??= (() => {
         deepFreezeSafe(obj);
     };
 
-    const baseModalOptions = Object.assign(Object.create(null), {
+    const toggleModalOverlay = (show) => {
+        const modalOverlay = document.getElementById("modalOverlay");
+        if (modalOverlay.classList.toggle("opened", show)) {
+            const focusedWindowZIndex = MUI.getWindowWithHighestZindex().style.zIndex;
+            modalOverlay.style.zIndex = focusedWindowZIndex - 1;
+        }
+    };
+
+    const baseWindowOptions = Object.assign(Object.create(null), {
         addClass: "modalDialog",
         collapsible: false,
         cornerRadius: 5,
         draggable: true,
-        footerHeight: 20,
+        shadowBlur: 4,
+        footerHeight: 32,
+        height: 100,
         icon: "images/qbittorrent-tray.svg",
         loadMethod: "xhr",
         maximizable: false,
@@ -83,17 +93,28 @@ window.qBittorrent.Dialog ??= (() => {
             top: 15,
             right: 10,
             bottom: 15,
-            left: 5
+            left: 8
         },
         resizable: true,
+        resizeLimit: { "x": [330], "y": [145] },
         width: 480,
+        onFocus: function() {
+            // adjust overlay to window with highest z index
+            toggleModalOverlay(true);
+        },
         onCloseComplete: function() {
             // make sure overlay is properly hidden upon modal closing
-            document.getElementById("modalOverlay").style.display = "none";
+            toggleModalOverlay(false);
         }
     });
 
-    deepFreeze(baseModalOptions);
+    deepFreeze(baseWindowOptions);
+
+    // Close modal on overlay click
+    document.getElementById("modalOverlay").addEventListener("click", () => {
+        const focusedWindow = MUI.getWindowWithHighestZindex();
+        window.qBittorrent.Client.closeWindow(focusedWindow.id);
+    });
 
     return exports();
 })();
@@ -474,22 +495,15 @@ const initializeWindows = function() {
         const hashes = torrentsTable.selectedRowsIds();
         if (hashes.length > 0) {
             if (window.qBittorrent.Cache.preferences.get().confirm_torrent_deletion) {
-                new MochaUI.Modal({
-                    ...window.qBittorrent.Dialog.baseModalOptions,
+                new MochaUI.Window({
+                    ...window.qBittorrent.Dialog.baseWindowOptions,
                     id: "confirmDeletionPage",
                     title: "QBT_TR(Remove torrent(s))QBT_TR[CONTEXT=confirmDeletionDlg]",
-                    data: {
-                        hashes: hashes,
-                        forceDeleteFiles: forceDeleteFiles
-                    },
+                    data: { hashes, forceDeleteFiles },
                     contentURL: "views/confirmdeletion.html",
                     onContentLoaded: function(w) {
                         MochaUI.resizeWindow(w, { centered: true });
                         MochaUI.centerWindow(w);
-                    },
-                    onCloseComplete: function() {
-                        // make sure overlay is properly hidden upon modal closing
-                        document.getElementById("modalOverlay").style.display = "none";
                     }
                 });
             }
@@ -553,14 +567,11 @@ const initializeWindows = function() {
         if (hashes.length > 0) {
             const enableAutoTMM = hashes.some((hash) => !(torrentsTable.getRow(hash).full_data.auto_tmm));
             if (enableAutoTMM) {
-                new MochaUI.Modal({
-                    ...window.qBittorrent.Dialog.baseModalOptions,
+                new MochaUI.Window({
+                    ...window.qBittorrent.Dialog.baseWindowOptions,
                     id: "confirmAutoTMMDialog",
                     title: "QBT_TR(Enable automatic torrent management)QBT_TR[CONTEXT=confirmAutoTMMDialog]",
-                    data: {
-                        hashes: hashes,
-                        enable: enableAutoTMM
-                    },
+                    data: { hashes, enable: enableAutoTMM },
                     contentURL: "views/confirmAutoTMM.html"
                 });
             }
@@ -587,8 +598,8 @@ const initializeWindows = function() {
         const hashes = torrentsTable.selectedRowsIds();
         if (hashes.length > 0) {
             if (window.qBittorrent.Cache.preferences.get().confirm_torrent_recheck) {
-                new MochaUI.Modal({
-                    ...window.qBittorrent.Dialog.baseModalOptions,
+                new MochaUI.Window({
+                    ...window.qBittorrent.Dialog.baseWindowOptions,
                     id: "confirmRecheckDialog",
                     title: "QBT_TR(Recheck confirmation)QBT_TR[CONTEXT=confirmRecheckDialog]",
                     data: { hashes: hashes },
@@ -744,14 +755,11 @@ const initializeWindows = function() {
         const hashes = torrentsTable.getFilteredTorrentsHashes(selectedStatus, selectedCategory, selectedTag, selectedTracker);
         if (hashes.length > 0) {
             if (window.qBittorrent.Cache.preferences.get().confirm_torrent_deletion) {
-                new MochaUI.Modal({
-                    ...window.qBittorrent.Dialog.baseModalOptions,
+                new MochaUI.Window({
+                    ...window.qBittorrent.Dialog.baseWindowOptions,
                     id: "confirmDeletionPage",
                     title: "QBT_TR(Remove torrent(s))QBT_TR[CONTEXT=confirmDeletionDlg]",
-                    data: {
-                        hashes: hashes,
-                        isDeletingVisibleTorrents: true
-                    },
+                    data: { hashes, isDeletingVisibleTorrents: true },
                     contentURL: "views/confirmdeletion.html",
                     onContentLoaded: function(w) {
                         MochaUI.resizeWindow(w, { centered: true });

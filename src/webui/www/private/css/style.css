@@ -16,6 +16,7 @@
     --color-background-hover: hsl(26deg 80% 60%);
     --color-border-blue: hsl(210deg 42% 48%);
     --color-border-default: hsl(0deg 0% 85%);
+    --color-button-hover: hsl(0deg 0% 87%);
     --color-icon-hover: brightness(0) invert(100%) sepia(100%) saturate(0%)
         hue-rotate(108deg) brightness(104%) contrast(104%);
 
@@ -41,6 +42,7 @@
         --color-background-default: hsl(0deg 0% 25%);
         --color-background-hover: hsl(26deg 50% 55%);
         --color-border-default: hsl(0deg 0% 33%);
+        --color-button-hover: hsl(215deg 16% 47%);
 
         color-scheme: dark;
     }
@@ -842,57 +844,81 @@ td.statusBarSeparator {
 }
 
 /* Modals */
-.modalDialog .mochaContent.pad {
-    display: flex !important; /* override for default mocha inline style */
-    flex-direction: column;
-    height: 100%;
+.modalDialog {
+    & .mochaContent.pad {
+        display: flex !important; /* override for default mocha inline style */
+        height: 100%;
+
+        & > :first-child {
+            margin: auto 0;
+            width: 100%;
+        }
+    }
+
+    & .dialogMessage {
+        overflow-wrap: anywhere;
+    }
+
+    & .genericConfirmGrid {
+        align-items: center;
+        display: grid;
+        gap: 2px 6px;
+        grid-template-columns: max-content 1fr;
+
+        & .confirmGridItem {
+            padding: 3px;
+        }
+    }
+
+    & .dialogButtonWrapper {
+        display: flex;
+        gap: 3px;
+        justify-content: end;
+        padding: 3px 6px;
+
+        & button[type="button"] {
+            background-color: var(--color-background-popup);
+            padding: 3px 10px;
+
+            &:hover {
+                background-color: var(--color-button-hover);
+            }
+        }
+    }
 }
 
-.modalDialog .mochaContent.pad > :last-child {
-    align-self: flex-end;
-}
+#confirmDeletionDialog {
+    & #rememberBtn {
+        background: url("../images/object-locked.svg") center center / 24px
+            no-repeat var(--color-background-popup);
+        height: 38px;
+        padding: 4px 6px;
+        width: 38px;
 
-.modalDialog .mochaContent.pad > :first-child {
-    margin: auto 0;
-}
+        &.disabled {
+            filter: grayscale(100%);
+        }
+    }
 
-#rememberBtn {
-    background: url("../images/object-locked.svg") center center / 24px
-        no-repeat var(--color-background-popup);
-    height: 38px;
-    padding: 4px 6px;
-    width: 38px;
-}
+    & #deleteFromDiskCB {
+        margin: 0 2px 0 0;
+        vertical-align: -1px;
+    }
 
-#rememberBtn.disabled {
-    filter: grayscale(100%);
-}
+    .confirmDeletionGrid {
+        align-items: center;
+        display: grid;
+        gap: 2px 6px;
+        grid-template-columns: max-content 1fr;
 
-#deleteFromDiskCB {
-    margin: 0 2px 0 0;
-    vertical-align: -1px;
-}
+        & .deletionGridItem {
+            padding: 3px;
 
-.dialogMessage {
-    overflow-wrap: anywhere;
-}
-
-.genericConfirmGrid,
-.confirmDeletionGrid {
-    align-items: center;
-    display: grid;
-    gap: 3px 4px;
-    grid-template-columns: max-content 1fr;
-    margin-bottom: 10px;
-}
-
-.confirmGridItem,
-.deletionGridItem {
-    padding: 3px;
-}
-
-.deletionGridItem:first-child {
-    justify-self: center;
+            &:first-child {
+                justify-self: center;
+            }
+        }
+    }
 }
 
 .confirmWarning,

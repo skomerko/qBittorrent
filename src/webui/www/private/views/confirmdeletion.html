@@ -13,9 +13,9 @@
         </span>
     </div>
 </div>
-<div>
-    <input type="button" value="QBT_TR(Remove)QBT_TR[CONTEXT=MainWindow]" id="confirmDeletionButton">
-    <input type="button" value="QBT_TR(Cancel)QBT_TR[CONTEXT=MainWindow]" id="cancelDeletionButton">
+<div class="dialogButtonWrapper">
+    <button type="button" class="confirmButton" id="confirmDeletionButton">QBT_TR(Remove)QBT_TR[CONTEXT=MainWindow]</button>
+    <button type="button" id="cancelDeletionButton">QBT_TR(Cancel)QBT_TR[CONTEXT=MainWindow]</button>
 </div>
 
 <script>
@@ -34,10 +34,20 @@
         const deletionText = document.getElementById("deleteTorrentMessage");
 
         const {
-            hashes,
-            isDeletingVisibleTorrents = false,
-            forceDeleteFiles = false,
-        } = window.MUI.Windows.instances["confirmDeletionPage"].options.data;
+            options: {
+                data: {
+                    hashes,
+                    isDeletingVisibleTorrents = false,
+                    forceDeleteFiles = false
+                },
+                id
+            },
+            windowEl,
+            overlayEl
+        } = window.MUI.Windows.instances["confirmDeletionPage"];
+
+        overlayEl.appendChild(windowEl.querySelector(".dialogButtonWrapper"));
+
         let prefDeleteContentFiles = window.qBittorrent.Cache.preferences.get().delete_torrent_content_files;
         deleteCB.checked = forceDeleteFiles || prefDeleteContentFiles;
 
@@ -68,8 +78,7 @@
             });
         });
 
-        cancelButton.focus();
-        cancelButton.addEventListener("click", (e) => { window.qBittorrent.Client.closeWindows(); });
+        cancelButton.addEventListener("click", (e) => { window.qBittorrent.Client.closeWindow(id); });
 
         confirmButton.addEventListener("click", (e) => {
             // Some torrents might be removed when waiting for user input, so refetch the torrent list
@@ -88,7 +97,7 @@
                     torrentsTable.deselectAll();
                     updateMainData();
                     updatePropertiesPanel();
-                    window.qBittorrent.Client.closeWindows();
+                    window.qBittorrent.Client.closeWindow(id);
                 },
                 onFailure: function() {
                     alert("QBT_TR(Unable to delete torrents.)QBT_TR[CONTEXT=HttpServer]");

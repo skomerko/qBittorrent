@@ -4,9 +4,9 @@
         <span class="confirmGridItem dialogMessage" id="confirmRecheckMessage"></span>
     </div>
 </div>
-<div>
-    <input type="button" value="QBT_TR(Yes)QBT_TR[CONTEXT=MainWindow]" id="confirmRecheckButton">
-    <input type="button" value="QBT_TR(No)QBT_TR[CONTEXT=MainWindow]" id="cancelRecheckButton">
+<div class="dialogButtonWrapper">
+    <button type="button" class="confirmButton" id="confirmRecheckButton">QBT_TR(Yes)QBT_TR[CONTEXT=MainWindow]</button>
+    <button type="button" id="cancelRecheckButton">QBT_TR(No)QBT_TR[CONTEXT=MainWindow]</button>
 </div>
 
 <script>
@@ -18,13 +18,16 @@
         const confirmText = document.getElementById("confirmRecheckMessage");
 
         const {
-            options: { data: { hashes } },
-            windowEl
+            options: { data: { hashes }, id },
+            windowEl,
+            overlayEl
         } = window.MUI.Windows.instances["confirmRecheckDialog"];
+
+        overlayEl.appendChild(windowEl.querySelector(".dialogButtonWrapper"));
 
         confirmText.textContent = "QBT_TR(Are you sure you want to recheck the selected torrent(s)?)QBT_TR[CONTEXT=confirmRecheckDialog]";
 
-        cancelButton.addEventListener("click", (e) => { window.qBittorrent.Client.closeWindow("confirmRecheckDialog"); });
+        cancelButton.addEventListener("click", (e) => { window.qBittorrent.Client.closeWindow(id); });
         confirmButton.addEventListener("click", (e) => {
             new Request({
                 url: "api/v2/torrents/recheck",
@@ -34,26 +37,12 @@
                 },
                 onSuccess: function() {
                     updateMainData();
-                    window.qBittorrent.Client.closeWindow("confirmRecheckDialog");
+                    window.qBittorrent.Client.closeWindow(id);
                 },
                 onFailure: function() {
                     alert("QBT_TR(Unable to recheck torrents.)QBT_TR[CONTEXT=HttpServer]");
                 }
             }).send();
-        });
-
-        // set tabindex so window element receives keydown events
-        windowEl.setAttribute("tabindex", "-1");
-        windowEl.focus();
-        windowEl.addEventListener("keydown", (e) => {
-            switch (e.key) {
-                case "Enter":
-                    confirmButton.click();
-                    break;
-                case "Escape":
-                    window.qBittorrent.Client.closeWindow("confirmRecheckDialog");
-                    break;
-            }
         });
     })();
 </script>

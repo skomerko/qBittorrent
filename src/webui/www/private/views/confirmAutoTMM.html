@@ -4,9 +4,9 @@
         <span class="confirmGridItem dialogMessage" id="confirmAutoTmmMessage"></span>
     </div>
 </div>
-<div>
-    <input type="button" value="QBT_TR(Yes)QBT_TR[CONTEXT=MainWindow]" id="confirmAutoTmmButton">
-    <input type="button" value="QBT_TR(No)QBT_TR[CONTEXT=MainWindow]" id="cancelAutoTmmButton">
+<div class="dialogButtonWrapper">
+    <button type="button" class="confirmButton" id="confirmAutoTmmButton">QBT_TR(Yes)QBT_TR[CONTEXT=MainWindow]</button>
+    <button type="button" id="cancelAutoTmmButton">QBT_TR(No)QBT_TR[CONTEXT=MainWindow]</button>
 </div>
 
 <script>
@@ -19,8 +19,11 @@
 
         const {
             options: { data: { hashes, enable }, id },
-            windowEl
+            windowEl,
+            overlayEl
         } = window.MUI.Windows.instances["confirmAutoTMMDialog"];
+
+        overlayEl.appendChild(windowEl.querySelector(".dialogButtonWrapper"));
 
         confirmText.textContent = "QBT_TR(Are you sure you want to enable Automatic Torrent Management for the selected torrent(s)? They may be relocated.)QBT_TR[CONTEXT=confirmAutoTMMDialog]";
 
@@ -41,20 +44,6 @@
                     alert("QBT_TR(Unable to set Auto Torrent Management for the selected torrents.)QBT_TR[CONTEXT=HttpServer]");
                 }
             }).send();
-        });
-
-        // set tabindex so window element receives keydown events
-        windowEl.setAttribute("tabindex", "-1");
-        windowEl.focus();
-        windowEl.addEventListener("keydown", (e) => {
-            switch (e.key) {
-                case "Enter":
-                    confirmButton.click();
-                    break;
-                case "Escape":
-                    window.qBittorrent.Client.closeWindow(id);
-                    break;
-            }
         });
     })();
 </script>
