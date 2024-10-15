@@ -845,7 +845,7 @@ td.statusBarSeparator {
 
 /* Modals */
 .modalDialog {
-    & .mochaContent.pad {
+    & .mochaContent.pad:not(#preferencesPage_content) {
         display: flex !important; /* override for default mocha inline style */
         height: 100%;
 
@@ -867,6 +867,22 @@ td.statusBarSeparator {
 
         & .confirmGridItem {
             padding: 3px;
+        }
+    }
+
+    & .genericDialogFlex {
+        display: flex;
+        flex-direction: column;
+
+        & label {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        & input {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
     }
 

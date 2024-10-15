@@ -99,6 +99,10 @@ window.qBittorrent.Dialog ??= (() => {
         resizeLimit: { "x": [330], "y": [145] },
         width: 480,
         onFocus: function() {
+            if (!this.isSetup) {
+                this.overlayEl.appendChild(this.overlayEl.querySelector(".dialogButtonWrapper"));
+                this.isSetup = true;
+            }
             // adjust overlay to window with highest z index
             toggleModalOverlay(true);
         },
@@ -232,22 +236,25 @@ const initializeWindows = function() {
 
         const id = "preferencesPage";
         new MochaUI.Window({
+            ...window.qBittorrent.Dialog.baseWindowOptions,
             id: id,
-            icon: "images/qbittorrent-tray.svg",
             title: "QBT_TR(Options)QBT_TR[CONTEXT=OptionsDialog]",
-            loadMethod: "xhr",
             toolbar: true,
-            contentURL: new URI("views/preferences.html").toString(),
-            require: {
-                css: ["css/Tabs.css"]
-            },
+            contentURL: "views/preferences.html",
             toolbarURL: "views/preferencesToolbar.html",
-            maximizable: false,
-            closable: true,
-            paddingVertical: 0,
-            paddingHorizontal: 0,
             width: loadWindowWidth(id, 730),
             height: loadWindowHeight(id, 600),
+            padding: { top: 10, right: 12, bottom: 10, left: 12 },
+            toolbarOnload: () => {},
+            onContentLoaded: function() {
+                this.overlayEl.appendChild(this.windowEl.querySelector(".dialogButtonWrapper"));
+                this.windowEl.querySelector(".confirmButton").addEventListener("click", () => {
+                    window.qBittorrent.Preferences.applyPreferences();
+                });
+                this.windowEl.querySelector(".cancelButton").addEventListener("click", () => {
+                    window.qBittorrent.Client.closeWindow(id);
+                });
+            },
             onResize: window.qBittorrent.Misc.createDebounceHandler(500, (e) => {
                 saveWindowSize(id);
             })

@@ -519,31 +519,22 @@ Supports the formats: S01E01, 1x1, 2017.12.31 and 31.12.2017 (Date formats also 
 
         const addRule = () => {
             new MochaUI.Window({
+                ...window.qBittorrent.Dialog.baseWindowOptions,
                 id: "newRulePage",
-                icon: "images/qbittorrent-tray.svg",
                 title: "QBT_TR(New rule name)QBT_TR[CONTEXT=AutomatedRssDownloader]",
-                loadMethod: "iframe",
-                contentURL: "newrule.html",
-                scrollbars: false,
-                resizable: false,
-                maximizable: false,
-                width: 350,
-                height: 100
+                contentURL: "views/newrule.html",
+                height: 85
             });
         };
 
         const renameRule = (rule) => {
             new MochaUI.Window({
+                ...window.qBittorrent.Dialog.baseWindowOptions,
                 id: "renameRulePage",
-                icon: "images/qbittorrent-tray.svg",
                 title: "QBT_TR(Rule renaming)QBT_TR[CONTEXT=AutomatedRssDownloader]",
-                loadMethod: "iframe",
-                contentURL: "rename_rule.html?rule=" + encodeURIComponent(rule),
-                scrollbars: false,
-                resizable: false,
-                maximizable: false,
-                width: 350,
-                height: 100
+                contentURL: "views/rename_rule.html",
+                data: { rule },
+                height: 85
             });
         };
 
@@ -555,33 +546,23 @@ Supports the formats: S01E01, 1x1, 2017.12.31 and 31.12.2017 (Date formats also 
         };
 
         const removeRules = (rules) => {
-            const encodedRules = rules.map((rule) => encodeURIComponent(rule));
             new MochaUI.Window({
+                ...window.qBittorrent.Dialog.baseWindowOptions,
                 id: "removeRulePage",
-                icon: "images/qbittorrent-tray.svg",
                 title: "QBT_TR(Rule deletion confirmation)QBT_TR[CONTEXT=AutomatedRssDownloader]",
-                loadMethod: "iframe",
-                contentURL: "confirmruledeletion.html?rules=" + encodeURIComponent(encodedRules.join("|")),
-                scrollbars: false,
-                resizable: false,
-                maximizable: false,
-                width: 360,
-                height: 90
+                contentURL: "views/confirmruledeletion.html",
+                data: { rules },
+                height: 85
             });
         };
 
         const clearDownloadedEpisodes = (rules) => {
-            const encodedRules = rules.map((rule) => encodeURIComponent(rule));
             new MochaUI.Window({
+                ...window.qBittorrent.Dialog.baseWindowOptions,
                 id: "clearRulesPage",
-                icon: "images/qbittorrent-tray.svg",
-                title: "QBT_TR(New rule name)QBT_TR[CONTEXT=AutomatedRssDownloader]",
-                loadMethod: "iframe",
-                contentURL: "confirmruleclear.html?rules=" + encodeURIComponent(encodedRules.join("|")),
-                scrollbars: false,
-                resizable: false,
-                maximizable: false,
-                width: 350,
+                title: "QBT_TR(Clear downloaded episodes)QBT_TR[CONTEXT=AutomatedRssDownloader]",
+                contentURL: "views/confirmruleclear.html",
+                data: { rules },
                 height: 85
             });
         };

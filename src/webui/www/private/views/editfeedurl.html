@@ -1,0 +1,58 @@
+<div id="editFeedURLDialog">
+    <div class="genericDialogFlex">
+        <label for="url">QBT_TR(Feed URL:)QBT_TR[CONTEXT=RSSWidget]</label>
+        <input type="text" id="url">
+    </div>
+</div>
+<div class="dialogButtonWrapper">
+    <button type="button" class="confirmButton">QBT_TR(Save)QBT_TR[CONTEXT=MainWindow]</button>
+    <button type="button" class="cancelButton">QBT_TR(Cancel)QBT_TR[CONTEXT=MainWindow]</button>
+</div>
+
+<script>
+    "use strict";
+    (() => {
+        const { options: { data: { path, url: currentUrl }, id }, overlayEl } = window.MUI.Windows.instances["editFeedURL"];
+
+        const urlInput = overlayEl.querySelector("#url");
+        urlInput.value = currentUrl;
+        urlInput.focus();
+        urlInput.setSelectionRange(0, currentUrl.length);
+
+        overlayEl.querySelector(".cancelButton").addEventListener("click", (e) => {
+            window.qBittorrent.Client.closeWindow(id);
+        });
+        overlayEl.querySelector(".confirmButton").addEventListener("click", (e) => {
+            // check field
+            const newUrl = urlInput.value.trim();
+            if (newUrl === "") {
+                alert("QBT_TR(URL cannot be empty)QBT_TR[CONTEXT=RSSWidget]");
+                return;
+            }
+
+            if (newUrl === currentUrl) {
+                alert("QBT_TR(URL is unchanged)QBT_TR[CONTEXT=RSSWidget]");
+                return;
+            }
+
+            confirmButton.disabled = true;
+
+            new Request({
+                url: "api/v2/rss/setFeedURL",
+                method: "post",
+                data: { path, url: newUrl },
+                onSuccess: (response) => {
+                    window.qBittorrent.Rss.updateRssFeedList();
+                    window.qBittorrent.Client.closeWindow(id);
+                },
+                onFailure: (response) => {
+                    if (response.status === 409)
+                        alert(response.responseText);
+                    else
+                        alert("QBT_TR(Unable to update URL)QBT_TR[CONTEXT=RSSWidget]");
+                    confirmButton.disabled = false;
+                }
+            }).send();
+        });
+    })();
+</script>

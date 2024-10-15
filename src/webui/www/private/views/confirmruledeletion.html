@@ -1,0 +1,51 @@
+<div id="confirmRuleDeletionDialog">
+    <div class="genericConfirmGrid">
+        <span class="confirmGridItem confirmWarning"></span>
+        <span class="confirmGridItem dialogMessage"></span>
+    </div>
+</div>
+<div class="dialogButtonWrapper">
+    <button type="button" class="confirmButton">QBT_TR(Yes)QBT_TR[CONTEXT=MainWindow]</button>
+    <button type="button" class="cancelButton">QBT_TR(No)QBT_TR[CONTEXT=MainWindow]</button>
+</div>
+
+<script>
+    "use strict";
+
+    (() => {
+        const { options: { data: { rules }, id }, overlayEl } = window.MUI.Windows.instances["removeRulePage"];
+
+        let ruleDeletionMessage;
+        if (rules.length === 1) {
+            const name = rules[0];
+            ruleDeletionMessage = "QBT_TR(Are you sure you want to remove the download rule named %1?)QBT_TR[CONTEXT=AutomatedRssDownloader]".replace("%1", `"${name}"`);
+        }
+        else {
+            ruleDeletionMessage = "QBT_TR(Are you sure you want to remove the selected download rules?)QBT_TR[CONTEXT=AutomatedRssDownloader]";
+        }
+
+        const confirmText = overlayEl.querySelector(".dialogMessage");
+        confirmText.textContent = ruleDeletionMessage;
+
+        overlayEl.querySelector(".cancelButton").addEventListener("click", (e) => {
+            window.qBittorrent.Client.closeWindow(id);
+        });
+        overlayEl.querySelector(".confirmButton").addEventListener("click", (e) => {
+            let completionCount = 0;
+            rules.forEach((rule) => {
+                new Request({
+                    url: "api/v2/rss/removeRule",
+                    method: "post",
+                    data: { ruleName: rule },
+                    onComplete: (response) => {
+                        ++completionCount;
+                        if (completionCount === rules.length) {
+                            window.qBittorrent.RssDownloader.updateRulesList();
+                            window.qBittorrent.closeWindow(id);
+                        }
+                    }
+                }).send();
+            });
+        });
+    })();
+</script>

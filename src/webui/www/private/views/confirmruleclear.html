@@ -1,0 +1,37 @@
+<div id="confirmRuleClearDialog">
+    <div class="genericConfirmGrid">
+        <span class="confirmGridItem confirmWarning"></span>
+        <span class="confirmGridItem dialogMessage"></span>
+    </div>
+</div>
+<div class="dialogButtonWrapper">
+    <button type="button" class="confirmButton">QBT_TR(Yes)QBT_TR[CONTEXT=MainWindow]</button>
+    <button type="button" class="cancelButton">QBT_TR(No)QBT_TR[CONTEXT=MainWindow]</button>
+</div>
+
+<script>
+    "use strict";
+
+    (() => {
+        const { options: { data: { rules }, id }, overlayEl } = window.MUI.Windows.instances["clearRulesPage"];
+
+        const confirmText = overlayEl.querySelector(".dialogMessage");
+        confirmText.textContent = "QBT_TR(Are you sure you want to clear the list of downloaded episodes for the selected rule?)QBT_TR[CONTEXT=AutomatedRssDownloader]";
+
+        overlayEl.querySelector(".cancelButton").addEventListener("click", (e) => {
+            window.qBittorrent.Client.closeWindow(id);
+        });
+        overlayEl.querySelector(".confirmButton").addEventListener("click", (e) => {
+            let completionCount = 0;
+            rules.forEach((rule) => {
+                window.qBittorrent.RssDownloader.modifyRuleState(rule, "previouslyMatchedEpisodes", [], () => {
+                    ++completionCount;
+                    if (completionCount === rules.length) {
+                        window.qBittorrent.RssDownloader.updateRulesList();
+                        window.qBittorrent.Client.closeWindow(id);
+                    }
+                });
+            });
+        });
+    })();
+</script>

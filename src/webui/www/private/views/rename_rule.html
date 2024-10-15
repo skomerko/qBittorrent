@@ -1,0 +1,54 @@
+<div id="renameRSSRuleDialog">
+    <div class="genericDialogFlex">
+        <label for="renameRule">QBT_TR(Please type the new rule name)QBT_TR[CONTEXT=AutomatedRssDownloader]</label>
+        <input type="text" id="renameRule">
+    </div>
+</div>
+<div class="dialogButtonWrapper">
+    <button type="button" class="confirmButton">QBT_TR(OK)QBT_TR[CONTEXT=MainWindow]</button>
+    <button type="button" class="cancelButton">QBT_TR(Cancel)QBT_TR[CONTEXT=MainWindow]</button>
+</div>
+
+<script>
+    "use strict";
+
+    (() => {
+        const { options: { data: { rule: oldName }, id }, overlayEl } = window.MUI.Windows.instances["renameRulePage"];
+
+        const newRuleInput = overlayEl.querySelector("#renameRule");
+        newRuleInput.value = oldName;
+        newRuleInput.focus();
+        newRuleInput.setSelectionRange(0, oldName.length);
+
+        overlayEl.querySelector(".cancelButton").addEventListener("click", (e) => {
+            window.qBittorrent.Client.closeWindow(id);
+        });
+        overlayEl.querySelector(".confirmButton").addEventListener("click", (e) => {
+            // check field
+            const newName = newRuleInput.value.trim();
+            if (newName === "") {
+                alert("QBT_TR(Name cannot be empty)QBT_TR[CONTEXT=HttpServer]");
+                return;
+            }
+
+            if (newName === oldName) {
+                alert("QBT_TR(Name is unchanged)QBT_TR[CONTEXT=HttpServer]");
+                return;
+            }
+
+            e.target.disabled = true;
+            new Request({
+                url: "api/v2/rss/renameRule",
+                method: "post",
+                data: {
+                    ruleName: oldName,
+                    newRuleName: newName
+                },
+                onSuccess: (response) => {
+                    window.qBittorrent.RssDownloader.updateRulesList();
+                    window.qBittorrent.Client.closeWindow(id);
+                }
+            }).send();
+        });
+    })();
+</script>

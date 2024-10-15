@@ -340,16 +340,12 @@
             }
 
             new MochaUI.Window({
+                ...window.qBittorrent.Dialog.baseWindowOptions,
                 id: "newFeed",
-                icon: "images/qbittorrent-tray.svg",
                 title: "QBT_TR(Please type a RSS feed URL)QBT_TR[CONTEXT=RSSWidget]",
-                loadMethod: "iframe",
-                contentURL: "newfeed.html?path=" + encodeURIComponent(path),
-                scrollbars: false,
-                resizable: false,
-                maximizable: false,
-                width: 350,
-                height: 100
+                contentURL: "views/newfeed.html",
+                data: { path },
+                height: 80
             });
         };
 
@@ -368,16 +364,12 @@
             }
 
             new MochaUI.Window({
+                ...window.qBittorrent.Dialog.baseWindowOptions,
                 id: "newFolder",
-                icon: "images/qbittorrent-tray.svg",
                 title: "QBT_TR(Please choose a folder name)QBT_TR[CONTEXT=RSSWidget]",
-                loadMethod: "iframe",
-                contentURL: "newfolder.html?path=" + encodeURIComponent(path),
-                scrollbars: false,
-                resizable: false,
-                maximizable: false,
-                width: 350,
-                height: 100
+                contentURL: "views/newfolder.html",
+                data: { path },
+                height: 80
             });
         };
 
@@ -728,47 +720,34 @@
 
         const moveItem = (oldPath) => {
             new MochaUI.Window({
+                ...window.qBittorrent.Dialog.baseWindowOptions,
                 id: "renamePage",
-                icon: "images/qbittorrent-tray.svg",
                 title: "QBT_TR(Please choose a new name for this RSS feed)QBT_TR[CONTEXT=RSSWidget]",
-                loadMethod: "iframe",
-                contentURL: "rename_feed.html?oldPath=" + encodeURIComponent(oldPath),
-                scrollbars: false,
-                resizable: false,
-                maximizable: false,
-                width: 350,
-                height: 100
+                contentURL: "views/rename_feed.html",
+                data: { oldPath },
+                height: 80
             });
         };
 
         const editUrl = (path, url) => {
             new MochaUI.Window({
+                ...window.qBittorrent.Dialog.baseWindowOptions,
                 id: "editFeedURL",
-                icon: "images/qbittorrent-tray.svg",
                 title: "QBT_TR(Please type a RSS feed URL)QBT_TR[CONTEXT=RSSWidget]",
-                loadMethod: "iframe",
-                contentURL: new URI("editfeedurl.html").setData("path", path).setData("url", url).toString(),
-                scrollbars: false,
-                resizable: false,
-                maximizable: false,
-                width: 350,
-                height: 100
+                contentURL: "views/editfeedurl.html",
+                data: { path, url },
+                height: 80
             });
         };
 
         const removeItem = (paths) => {
-            const encodedPaths = paths.map((path) => encodeURIComponent(path));
             new MochaUI.Window({
+                ...window.qBittorrent.Dialog.baseWindowOptions,
                 id: "confirmFeedDeletionPage",
-                icon: "images/qbittorrent-tray.svg",
                 title: "QBT_TR(Deletion confirmation)QBT_TR[CONTEXT=RSSWidget]",
-                loadMethod: "iframe",
-                contentURL: "confirmfeeddeletion.html?paths=" + encodeURIComponent(encodedPaths.join("|")),
-                scrollbars: false,
-                resizable: false,
-                maximizable: false,
-                width: 350,
-                height: 70
+                contentURL: "views/confirmfeeddeletion.html",
+                data: { paths },
+                height: 80
             });
         };
 
@@ -877,12 +856,10 @@
         const openRssDownloader = () => {
             const id = "rssdownloaderpage";
             new MochaUI.Window({
+                ...window.qBittorrent.Dialog.baseWindowOptions,
                 id: id,
-                icon: "images/qbittorrent-tray.svg",
                 title: "QBT_TR(Rss Downloader)QBT_TR[CONTEXT=AutomatedRssDownloader]",
-                loadMethod: "xhr",
                 contentURL: "views/rssDownloader.html",
-                maximizable: false,
                 width: loadWindowWidth(id, 800),
                 height: loadWindowHeight(id, 650),
                 onResize: window.qBittorrent.Misc.createDebounceHandler(500, (e) => {

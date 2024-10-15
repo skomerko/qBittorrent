@@ -1,0 +1,46 @@
+<div id="createRSSRuleDialog">
+    <div class="genericDialogFlex">
+        <label for="rssName">QBT_TR(Please type the name of the new download rule.)QBT_TR[CONTEXT=AutomatedRssDownloader]</label>
+        <input type="text" id="rssName">
+    </div>
+</div>
+<div class="dialogButtonWrapper">
+    <button type="button" class="confirmButton">QBT_TR(OK)QBT_TR[CONTEXT=MainWindow]</button>
+    <button type="button" class="cancelButton">QBT_TR(Cancel)QBT_TR[CONTEXT=MainWindow]</button>
+</div>
+
+<script>
+    "use strict";
+
+    (() => {
+        const { options: { id }, overlayEl } = window.MUI.Windows.instances["newRulePage"];
+
+        const newRuleInput = overlayEl.querySelector("#rssName");
+        newRuleInput.focus();
+
+        overlayEl.querySelector(".cancelButton").addEventListener("click", (e) => {
+            window.qBittorrent.Client.closeWindow(id);
+        });
+        overlayEl.querySelector(".confirmButton").addEventListener("click", (e) => {
+            // check field
+            const name = newRuleInput.value.trim();
+            if (name === "") {
+                alert("QBT_TR(Name cannot be empty)QBT_TR[CONTEXT=HttpServer]");
+                return;
+            }
+            confirmButton.disabled = true;
+            new Request({
+                url: "api/v2/rss/setRule",
+                method: "post",
+                data: {
+                    ruleName: name,
+                    ruleDef: "{}"
+                },
+                onSuccess: (response) => {
+                    window.qBittorrent.RssDownloader.updateRulesList();
+                    window.qBittorrent.Client.closeWindow(id);
+                }
+            }).send();
+        });
+    })();
+</script>

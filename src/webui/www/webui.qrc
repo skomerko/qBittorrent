@@ -3,9 +3,6 @@
         <file>private/addpeers.html</file>
         <file>private/addtrackers.html</file>
         <file>private/addwebseeds.html</file>
-        <file>private/confirmfeeddeletion.html</file>
-        <file>private/confirmruleclear.html</file>
-        <file>private/confirmruledeletion.html</file>
         <file>private/confirmtrackerdeletion.html</file>
         <file>private/css/Core.css</file>
         <file>private/css/dynamicTable.css</file>
@@ -17,7 +14,6 @@
         <file>private/css/Window.css</file>
         <file>private/download.html</file>
         <file>private/downloadlimit.html</file>
-        <file>private/editfeedurl.html</file>
         <file>private/edittracker.html</file>
         <file>private/editwebseed.html</file>
         <file>private/images/3-state-checkbox.gif</file>
@@ -382,15 +378,10 @@
         <file>private/images/wallet-open.svg</file>
         <file>private/index.html</file>
         <file>private/newcategory.html</file>
-        <file>private/newfeed.html</file>
-        <file>private/newfolder.html</file>
-        <file>private/newrule.html</file>
         <file>private/newtag.html</file>
         <file>private/rename.html</file>
-        <file>private/rename_feed.html</file>
         <file>private/rename_file.html</file>
         <file>private/rename_files.html</file>
-        <file>private/rename_rule.html</file>
         <file>private/scripts/cache.js</file>
         <file>private/scripts/client.js</file>
         <file>private/scripts/contextmenu.js</file>
@@ -426,11 +417,20 @@
         <file>private/views/confirmAutoTMM.html</file>
         <file>private/views/confirmdeletion.html</file>
         <file>private/views/confirmRecheck.html</file>
+        <file>private/views/confirmfeeddeletion.html</file>
+        <file>private/views/confirmruleclear.html</file>
+        <file>private/views/confirmruledeletion.html</file>
+        <file>private/views/editfeedurl.html</file>
         <file>private/views/cookies.html</file>
         <file>private/views/filters.html</file>
         <file>private/views/installsearchplugin.html</file>
         <file>private/views/log.html</file>
         <file>private/views/logTabs.html</file>
+        <file>private/views/newfeed.html</file>
+        <file>private/views/newfolder.html</file>
+        <file>private/views/newrule.html</file>
+        <file>private/views/rename_feed.html</file>
+        <file>private/views/rename_rule.html</file>
         <file>private/views/preferences.html</file>
         <file>private/views/preferencesToolbar.html</file>
         <file>private/views/properties.html</file>

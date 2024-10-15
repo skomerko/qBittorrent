@@ -1,0 +1,42 @@
+<div id="confirmFeedDeletionDialog">
+    <div class="genericConfirmGrid">
+        <span class="confirmGridItem confirmWarning"></span>
+        <span class="confirmGridItem dialogMessage"></span>
+    </div>
+</div>
+<div class="dialogButtonWrapper">
+    <button type="button" class="confirmButton">QBT_TR(Yes)QBT_TR[CONTEXT=MainWindow]</button>
+    <button type="button" class="cancelButton">QBT_TR(No)QBT_TR[CONTEXT=MainWindow]</button>
+</div>
+
+<script>
+    "use strict";
+
+    (() => {
+        const { options: { data: { paths }, id }, overlayEl } = window.MUI.Windows.instances["confirmFeedDeletionPage"];
+
+        const confirmText = overlayEl.querySelector(".dialogMessage");
+        confirmText.textContent = "QBT_TR(Are you sure you want to delete the selected RSS feeds?)QBT_TR[CONTEXT=RSSWidget]";
+
+        overlayEl.querySelector(".cancelButton").addEventListener("click", (e) => {
+            window.qBittorrent.Client.closeWindow(id);
+        });
+        overlayEl.querySelector(".confirmButton").addEventListener("click", (e) => {
+            let completionCount = 0;
+            paths.forEach((path) => {
+                new Request({
+                    url: "api/v2/rss/removeItem",
+                    method: "post",
+                    data: { path },
+                    onComplete: (response) => {
+                        ++completionCount;
+                        if (completionCount === paths.length) {
+                            window.qBittorrent.Rss.updateRssFeedList();
+                            window.qBittorrent.Client.closeWindow(id);
+                        }
+                    }
+                }).send();
+            });
+        });
+    })();
+</script>

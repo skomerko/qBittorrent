@@ -1,0 +1,60 @@
+<div id="renameRSSFeedDialog">
+    <div class="genericDialogFlex">
+        <label for="newRssFeed">QBT_TR(New feed name:)QBT_TR[CONTEXT=RSSWidget]</label>
+        <input type="text" id="newRssFeed">
+    </div>
+</div>
+<div class="dialogButtonWrapper">
+    <button type="button" class="confirmButton">QBT_TR(OK)QBT_TR[CONTEXT=MainWindow]</button>
+    <button type="button" class="cancelButton">QBT_TR(Cancel)QBT_TR[CONTEXT=MainWindow]</button>
+</div>
+
+<script>
+    "use strict";
+
+    (() => {
+        const { options: { data: { oldPath }, id }, overlayEl } = window.MUI.Windows.instances["renamePage"];
+
+        const newFeedInput = overlayEl.querySelector("#newRssFeed");
+        newFeedInput.value = oldPath;
+        newFeedInput.focus();
+        newFeedInput.setSelectionRange(0, oldPath.length);
+
+        overlayEl.querySelector(".cancelButton").addEventListener("click", (e) => {
+            window.qBittorrent.Client.closeWindow(id);
+        });
+        overlayEl.querySelector(".confirmButton").addEventListener("click", (e) => {
+            // check field
+            const newPath = newFeedInput.value.trim();
+            if (newPath === "") {
+                alert("QBT_TR(Name cannot be empty)QBT_TR[CONTEXT=HttpServer]");
+                return;
+            }
+
+            if (newPath === oldPath) {
+                alert("QBT_TR(Name is unchanged)QBT_TR[CONTEXT=HttpServer]");
+                return;
+            }
+
+            e.target.disabled = true;
+
+            new Request({
+                url: "api/v2/rss/moveItem",
+                method: "post",
+                data: {
+                    itemPath: oldPath,
+                    destPath: newPath
+                },
+                onSuccess: (response) => {
+                    window.qBittorrent.Rss.updateRssFeedList();
+                    window.qBittorrent.Client.closeWindow(id);
+                },
+                onFailure: (response) => {
+                    if (response.status === 409)
+                        alert(response.responseText);
+                    e.target.disabled = false;
+                }
+            }).send();
+        });
+    })();
+</script>
