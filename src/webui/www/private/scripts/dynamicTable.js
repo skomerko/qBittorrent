@@ -546,7 +546,7 @@ window.qBittorrent.DynamicTable ??= (() => {
             column["onResize"] = null;
             column["staticWidth"] = null;
             column["calculateBuffer"] = () => 0;
-            this.columns.push(column);
+            column["_order"] = this.columns.push(column) - 1;
             this.columns[name] = column;
 
             this.hiddenTableHeader.appendChild(new Element("th"));
@@ -568,8 +568,10 @@ window.qBittorrent.DynamicTable ??= (() => {
                     columnsOrder.push(this.columns[i].name);
             }
 
-            for (let i = 0; i < this.columns.length; ++i)
+            for (let i = 0; i < this.columns.length; ++i) {
                 this.columns[i] = this.columns[columnsOrder[i]];
+                this.columns[i]._order = i;
+            }
         },
 
         saveColumnsOrder: function() {
@@ -606,11 +608,7 @@ window.qBittorrent.DynamicTable ??= (() => {
         },
 
         getColumnPos: function(columnName) {
-            for (let i = 0; i < this.columns.length; ++i) {
-                if (this.columns[i].name === columnName)
-                    return i;
-            }
-            return -1;
+            return this.columns?.[columnName]?._order ?? -1;
         },
 
         updateColumn: function(columnName) {
