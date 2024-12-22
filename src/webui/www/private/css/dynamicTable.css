@@ -9,7 +9,7 @@
 }
 
 #transferList .dynamicTable td {
-    padding: 3px 2px;
+    padding: 2px;
 }
 
 .dynamicTableDiv table.dynamicTable tbody tr.selected {
@@ -22,10 +22,50 @@
     color: var(--color-text-white);
 }
 
-#transferList img.stateIcon {
-    height: 1.3em;
-    margin-bottom: -1px;
-    vertical-align: middle;
+#transferList .stateIcon {
+    background: left center / contain no-repeat;
+    margin-left: 2px;
+    padding-left: 1.55em;
+
+    &.torrentDownloading {
+        background-image: url("../images/downloading.svg");
+    }
+
+    &.torrentUploading {
+        background-image: url("../images/upload.svg");
+    }
+
+    &.torrentStalledUP {
+        background-image: url("../images/stalledUP.svg");
+    }
+
+    &.torrentStalledDL {
+        background-image: url("../images/stalledDL.svg");
+    }
+
+    &.torrentStoppedDL {
+        background-image: url("../images/stopped.svg");
+    }
+
+    &.torrentStoppedUP {
+        background-image: url("../images/checked-completed.svg");
+    }
+
+    &.torrentQueued {
+        background-image: url("../images/queued.svg");
+    }
+
+    &.torrentChecking {
+        background-image: url("../images/force-recheck.svg");
+    }
+
+    &.torrentMoving {
+        background-image: url("../images/set-location.svg");
+    }
+
+    &.torrentError {
+        background-image: url("../images/error.svg");
+    }
 }
 
 #transferList #transferList_pad {

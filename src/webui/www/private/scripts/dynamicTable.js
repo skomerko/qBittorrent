@@ -988,7 +988,6 @@ window.qBittorrent.DynamicTable ??= (() => {
 
         initColumns: function() {
             this.newColumn("priority", "", "#", 30, true);
-            this.newColumn("state_icon", "cursor: default", "", 22, true);
             this.newColumn("name", "", "QBT_TR(Name)QBT_TR[CONTEXT=TransferListModel]", 200, true);
             this.newColumn("size", "", "QBT_TR(Size)QBT_TR[CONTEXT=TransferListModel]", 100, true);
             this.newColumn("total_size", "", "QBT_TR(Total Size)QBT_TR[CONTEXT=TransferListModel]", 100, false);
@@ -1026,9 +1025,7 @@ window.qBittorrent.DynamicTable ??= (() => {
             this.newColumn("reannounce", "", "QBT_TR(Reannounce In)QBT_TR[CONTEXT=TransferListModel]", 100, false);
             this.newColumn("private", "", "QBT_TR(Private)QBT_TR[CONTEXT=TransferListModel]", 100, false);
 
-            this.columns["state_icon"].onclick = "";
-            this.columns["state_icon"].dataProperties[0] = "state";
-
+            this.columns["name"].dataProperties.push("state");
             this.columns["num_seeds"].dataProperties.push("num_complete");
             this.columns["num_leechs"].dataProperties.push("num_incomplete");
             this.columns["time_active"].dataProperties.push("seeding_time");
@@ -1037,81 +1034,71 @@ window.qBittorrent.DynamicTable ??= (() => {
         },
 
         initColumnsFunctions: function() {
-
-            // state_icon
-            this.columns["state_icon"].updateTd = function(td, row) {
-                let state = this.getRowValue(row);
-                let img_path;
+            // name
+            this.columns["name"].updateStateIcon = function(td, row) {
+                const state = this.getRowValue(row, 1);
+                let stateIconClass = "torrentStateUnknown";
                 // normalize states
                 switch (state) {
                     case "forcedDL":
                     case "metaDL":
                     case "forcedMetaDL":
                     case "downloading":
-                        state = "downloading";
-                        img_path = "images/downloading.svg";
+                        stateIconClass = "torrentDownloading";
                         break;
                     case "forcedUP":
                     case "uploading":
-                        state = "uploading";
-                        img_path = "images/upload.svg";
+                        stateIconClass = "torrentUploading";
                         break;
                     case "stalledUP":
-                        state = "stalledUP";
-                        img_path = "images/stalledUP.svg";
+                        stateIconClass = "torrentStalledUP";
                         break;
                     case "stalledDL":
-                        state = "stalledDL";
-                        img_path = "images/stalledDL.svg";
+                        stateIconClass = "torrentStalledDL";
                         break;
                     case "stoppedDL":
-                        state = "torrent-stop";
-                        img_path = "images/stopped.svg";
+                        stateIconClass = "torrentStoppedDL";
                         break;
                     case "stoppedUP":
-                        state = "checked-completed";
-                        img_path = "images/checked-completed.svg";
+                        stateIconClass = "torrentStoppedUP";
                         break;
                     case "queuedDL":
                     case "queuedUP":
-                        state = "queued";
-                        img_path = "images/queued.svg";
+                        stateIconClass = "torrentQueued";
                         break;
                     case "checkingDL":
                     case "checkingUP":
                     case "queuedForChecking":
                     case "checkingResumeData":
-                        state = "force-recheck";
-                        img_path = "images/force-recheck.svg";
+                        stateIconClass = "torrentChecking";
                         break;
                     case "moving":
-                        state = "moving";
-                        img_path = "images/set-location.svg";
+                        stateIconClass = "torrentMoving";
                         break;
                     case "error":
                     case "unknown":
                     case "missingFiles":
-                        state = "error";
-                        img_path = "images/error.svg";
+                        stateIconClass = "torrentError";
                         break;
                     default:
                         break; // do nothing
                 }
 
-                if (td.getChildren("img").length > 0) {
-                    const img = td.getChildren("img")[0];
-                    if (!img.src.includes(img_path)) {
-                        img.src = img_path;
-                        img.title = state;
-                    }
+                const span = td.firstElementChild;
+                span.className = `stateIcon ${stateIconClass}`;
+            };
+
+            this.columns["name"].updateTd = function(td, row) {
+                const name = this.getRowValue(row, 0);
+                let span = td.firstElementChild;
+                if (span === null) {
+                    span = document.createElement("span");
+                    td.append(span);
+                    this.updateStateIcon(td, row);
                 }
-                else {
-                    const img = document.createElement("img");
-                    img.src = img_path;
-                    img.className = "stateIcon";
-                    img.title = state;
-                    td.append(img);
-                }
+
+                span.textContent = name;
+                td.title = name;
             };
 
             // status
@@ -1449,6 +1436,24 @@ window.qBittorrent.DynamicTable ??= (() => {
                 td.textContent = string;
                 td.title = string;
             };
+        },
+
+        updateRow: function(tr, fullUpdate) {
+            const row = this.getRow(tr.rowId);
+            const data = row[fullUpdate ? "full_data" : "data"];
+
+            const tds = tr.querySelectorAll("td");
+            for (let i = 0; i < this.columns.length; ++i) {
+                if (Object.hasOwn(data, this.columns[i].dataProperties[0]))
+                    this.columns[i].updateTd(tds[i], row);
+            }
+
+            if (Object.hasOwn(data, "state") && !fullUpdate) {
+                const pos = this.getColumnPos("name");
+                this.columns["name"].updateStateIcon(tds[pos], row);
+            }
+
+            row["data"] = {};
         },
 
         applyFilter: (row, filterName, categoryHash, tagHash, trackerHash, filterTerms) => {
