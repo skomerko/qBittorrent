@@ -191,53 +191,28 @@ window.qBittorrent.DynamicTable ??= (() => {
                         this.canResize = true;
                         e.target.closest("tr").style.cursor = "col-resize";
                     }
-                    else if ((mouseXRelative < 5) && e.target.getPrevious('[class=""]')) {
-                        this.resizeTh = e.target.getPrevious('[class=""]');
-                        this.canResize = true;
-                        e.target.closest("tr").style.cursor = "col-resize";
-                    }
                     else {
                         this.canResize = false;
                         e.target.closest("tr").style.cursor = "";
                     }
                 }
                 if (this.currentHeaderAction === "drag") {
-                    const previousVisibleSibling = e.target.getPrevious('[class=""]');
-                    let borderChangeElement = previousVisibleSibling;
-                    let changeBorderSide = "right";
-
-                    if (mouseXRelative > (brect.width / 2)) {
-                        borderChangeElement = e.target;
-                        this.dropSide = "right";
-                    }
-                    else {
-                        this.dropSide = "left";
-                    }
-
-                    e.target.closest("tr").style.cursor = "move";
-
-                    if (!previousVisibleSibling) { // right most column
-                        borderChangeElement = e.target;
-
-                        if (mouseXRelative <= (brect.width / 2))
-                            changeBorderSide = "left";
-                    }
-
                     const borderStyle = "solid #e60";
-                    if (changeBorderSide === "left") {
-                        borderChangeElement.style.borderLeft = borderStyle;
-                        borderChangeElement.style.borderLeftWidth = "initial";
-                    }
-                    else {
+                    const borderChangeElement = e.target;
+                    let changeBorderSide = "right";
+                    if (mouseXRelative > (brect.width / 2)) {
+                        this.dropSide = "right";
                         borderChangeElement.style.borderRight = borderStyle;
                         borderChangeElement.style.borderRightWidth = "initial";
                     }
-
+                    else {
+                        this.dropSide = "left";
+                        changeBorderSide = "left";
+                        borderChangeElement.style.borderLeft = borderStyle;
+                        borderChangeElement.style.borderLeftWidth = "initial";
+                    }
+                    e.target.closest("tr").style.cursor = "move";
                     resetElementBorderStyle(borderChangeElement, ((changeBorderSide === "right") ? "left" : "right"));
-
-                    borderChangeElement.getSiblings('[class=""]').each((el) => {
-                        resetElementBorderStyle(el);
-                    });
                 }
                 this.lastHoverTh = e.target;
                 this.lastClientX = e.clientX;
@@ -294,12 +269,8 @@ window.qBittorrent.DynamicTable ??= (() => {
                     this.tableBody.replaceChildren();
                     this.updateTable(true);
                 }
-                if (this.currentHeaderAction === "drag") {
+                if (this.currentHeaderAction === "drag")
                     resetElementBorderStyle(el);
-                    el.getSiblings('[class=""]').each((el) => {
-                        resetElementBorderStyle(el);
-                    });
-                }
                 this.currentHeaderAction = "";
             }.bind(this);
 
