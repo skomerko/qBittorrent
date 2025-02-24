@@ -491,8 +491,6 @@ window.addEventListener("DOMContentLoaded", () => {
         if (!categoryList)
             return;
 
-        [...categoryList.children].forEach((el) => { el.destroy(); });
-
         const categoryItemTemplate = document.getElementById("categoryFilterItem");
 
         const createLink = (category, text, count) => {
@@ -502,6 +500,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
             const span = categoryFilterItem.firstElementChild;
             span.lastElementChild.textContent = `${text} (${count})`;
+            window.qBittorrent.Filters.categoriesFilterContextMenu.addTarget(categoryFilterItem);
 
             return categoryFilterItem;
         };
@@ -594,8 +593,7 @@ window.addEventListener("DOMContentLoaded", () => {
                 categoriesFragment.appendChild(createLink(categoryName, categoryName, categoryCount));
         }
 
-        categoryList.appendChild(categoriesFragment);
-        window.qBittorrent.Filters.categoriesFilterContextMenu.searchAndAddTargets();
+        categoryList.replaceChildren(categoriesFragment);
     };
 
     const highlightSelectedCategory = () => {
@@ -612,8 +610,6 @@ window.addEventListener("DOMContentLoaded", () => {
         if (tagFilterList === null)
             return;
 
-        [...tagFilterList.children].forEach((el) => { el.destroy(); });
-
         const tagItemTemplate = document.getElementById("tagFilterItem");
 
         const createLink = (tag, text, count) => {
@@ -623,6 +619,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
             const span = tagFilterItem.firstElementChild;
             span.lastChild.textContent = `${text} (${count})`;
+            window.qBittorrent.Filters.tagsFilterContextMenu.addTarget(tagFilterItem);
 
             return tagFilterItem;
         };
@@ -633,8 +630,11 @@ window.addEventListener("DOMContentLoaded", () => {
                 untagged += 1;
         }
 
-        tagFilterList.appendChild(createLink(TAGS_ALL, "QBT_TR(All)QBT_TR[CONTEXT=TagFilterModel]", torrentsTable.getRowSize()));
-        tagFilterList.appendChild(createLink(TAGS_UNTAGGED, "QBT_TR(Untagged)QBT_TR[CONTEXT=TagFilterModel]", untagged));
+        const tagsFragment = new DocumentFragment();
+        tagsFragment.append(
+            createLink(TAGS_ALL, "QBT_TR(All)QBT_TR[CONTEXT=TagFilterModel]", torrentsTable.getRowSize()),
+            createLink(TAGS_UNTAGGED, "QBT_TR(Untagged)QBT_TR[CONTEXT=TagFilterModel]", untagged)
+        );
 
         const sortedTags = [];
         for (const [tag, torrents] of tagMap) {
@@ -646,9 +646,9 @@ window.addEventListener("DOMContentLoaded", () => {
         sortedTags.sort((left, right) => window.qBittorrent.Misc.naturalSortCollator.compare(left.tagName, right.tagName));
 
         for (const { tagName, tagSize } of sortedTags)
-            tagFilterList.appendChild(createLink(tagName, tagName, tagSize));
+            tagsFragment.appendChild(createLink(tagName, tagName, tagSize));
 
-        window.qBittorrent.Filters.tagsFilterContextMenu.searchAndAddTargets();
+        tagFilterList.replaceChildren(tagsFragment);
     };
 
     const highlightSelectedTag = () => {
@@ -665,8 +665,6 @@ window.addEventListener("DOMContentLoaded", () => {
         if (trackerFilterList === null)
             return;
 
-        [...trackerFilterList.children].forEach((el) => { el.destroy(); });
-
         const trackerItemTemplate = document.getElementById("trackerFilterItem");
 
         const createLink = (host, text, count) => {
@@ -676,6 +674,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
             const span = trackerFilterItem.firstElementChild;
             span.lastChild.textContent = `${text} (${count})`;
+            window.qBittorrent.Filters.trackersFilterContextMenu.addTarget(trackerFilterItem);
 
             return trackerFilterItem;
         };
@@ -686,8 +685,11 @@ window.addEventListener("DOMContentLoaded", () => {
                 trackerlessTorrentsCount += 1;
         }
 
-        trackerFilterList.appendChild(createLink(TRACKERS_ALL, "QBT_TR(All)QBT_TR[CONTEXT=TrackerFiltersList]", torrentsTable.getRowSize()));
-        trackerFilterList.appendChild(createLink(TRACKERS_TRACKERLESS, "QBT_TR(Trackerless)QBT_TR[CONTEXT=TrackerFiltersList]", trackerlessTorrentsCount));
+        const trackersFragment = new DocumentFragment();
+        trackerFilterList.append(
+            createLink(TRACKERS_ALL, "QBT_TR(All)QBT_TR[CONTEXT=TrackerFiltersList]", torrentsTable.getRowSize()),
+            createLink(TRACKERS_TRACKERLESS, "QBT_TR(Trackerless)QBT_TR[CONTEXT=TrackerFiltersList]", trackerlessTorrentsCount)
+        );
 
         // Sort trackers by hostname
         const sortedList = [];
@@ -705,9 +707,9 @@ window.addEventListener("DOMContentLoaded", () => {
         }
         sortedList.sort((left, right) => window.qBittorrent.Misc.naturalSortCollator.compare(left.trackerHost, right.trackerHost));
         for (const { trackerHost, trackerCount } of sortedList)
-            trackerFilterList.appendChild(createLink(trackerHost, trackerHost, trackerCount));
+            trackersFragment.appendChild(createLink(trackerHost, trackerHost, trackerCount));
 
-        window.qBittorrent.Filters.trackersFilterContextMenu.searchAndAddTargets();
+        trackerFilterList.replaceChildren(trackersFragment);
     };
 
     const highlightSelectedTracker = () => {

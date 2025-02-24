@@ -888,7 +888,7 @@ window.qBittorrent.DynamicTable ??= (() => {
             const rowPos = rows.length;
 
             while ((rowPos < trs.length) && (trs.length > 0))
-                trs.pop().destroy();
+                trs.pop().remove();
         },
 
         updateRow: function(tr, fullUpdate) {
@@ -906,15 +906,13 @@ window.qBittorrent.DynamicTable ??= (() => {
         removeRow: function(rowId) {
             this.selectedRows.erase(rowId);
             this.rows.delete(rowId);
-            const tr = this.getTrByRowId(rowId);
-            tr?.destroy();
+            this.getTrByRowId(rowId)?.remove();
         },
 
         clear: function() {
             this.deselectAll();
             this.rows.clear();
-            for (const tr of this.getTrs())
-                tr.destroy();
+            this.tableBody.replaceChildren();
         },
 
         selectedRowsIds: function() {
