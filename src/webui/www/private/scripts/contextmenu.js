@@ -140,7 +140,7 @@ window.qBittorrent.ContextMenu ??= (() => {
 
         setupEventListeners(elem) {
             elem.addEventListener("contextmenu", (e) => {
-                this.triggerMenu(e, elem);
+                this.triggerMenu(e, e.currentTarget);
             });
             elem.addEventListener("click", (e) => {
                 this.hide();
@@ -161,7 +161,7 @@ window.qBittorrent.ContextMenu ??= (() => {
 
                 const isTargetUnchanged = (Math.abs(e.changedTouches[0].pageX - touchStartEvent.changedTouches[0].pageX) <= 10) && (Math.abs(e.changedTouches[0].pageY - touchStartEvent.changedTouches[0].pageY) <= 10);
                 if (((now - touchStartAt) >= this.options.touchTimer) && isTargetUnchanged)
-                    this.triggerMenu(touchStartEvent, elem);
+                    this.triggerMenu(touchStartEvent, e.currentTarget);
             }, { passive: true });
         }
 
@@ -478,7 +478,6 @@ window.qBittorrent.ContextMenu ??= (() => {
 
         updateCategoriesSubMenu(categories) {
             const contextCategoryList = $("contextCategoryList");
-            [...contextCategoryList.children].forEach((el) => { el.destroy(); });
 
             const createMenuItem = (text, imgURL, clickFn) => {
                 const anchor = document.createElement("a");
@@ -495,8 +494,10 @@ window.qBittorrent.ContextMenu ??= (() => {
 
                 return item;
             };
-            contextCategoryList.appendChild(createMenuItem("QBT_TR(New...)QBT_TR[CONTEXT=TransferListWidget]", "images/list-add.svg", torrentNewCategoryFN));
-            contextCategoryList.appendChild(createMenuItem("QBT_TR(Reset)QBT_TR[CONTEXT=TransferListWidget]", "images/edit-clear.svg", () => { torrentSetCategoryFN(""); }));
+
+            const contextCategoryFragment = new DocumentFragment();
+            contextCategoryFragment.appendChild(createMenuItem("QBT_TR(New...)QBT_TR[CONTEXT=TransferListWidget]", "images/list-add.svg", torrentNewCategoryFN));
+            contextCategoryFragment.appendChild(createMenuItem("QBT_TR(Reset)QBT_TR[CONTEXT=TransferListWidget]", "images/edit-clear.svg", () => { torrentSetCategoryFN(""); }));
 
             const sortedCategories = [...categories.keys()];
             sortedCategories.sort(window.qBittorrent.Misc.naturalSortCollator.compare);
@@ -522,13 +523,13 @@ window.qBittorrent.ContextMenu ??= (() => {
                     first = false;
                 }
 
-                contextCategoryList.appendChild(setCategoryItem);
+                contextCategoryFragment.appendChild(setCategoryItem);
             }
+            contextCategoryList.replaceChildren(contextCategoryFragment);
         }
 
         updateTagsSubMenu(tags) {
             const contextTagList = $("contextTagList");
-            contextTagList.replaceChildren();
 
             const createMenuItem = (text, imgURL, clickFn) => {
                 const anchor = document.createElement("a");
@@ -545,8 +546,10 @@ window.qBittorrent.ContextMenu ??= (() => {
 
                 return item;
             };
-            contextTagList.appendChild(createMenuItem("QBT_TR(Add...)QBT_TR[CONTEXT=TransferListWidget]", "images/list-add.svg", torrentAddTagsFN));
-            contextTagList.appendChild(createMenuItem("QBT_TR(Remove All)QBT_TR[CONTEXT=TransferListWidget]", "images/edit-clear.svg", torrentRemoveAllTagsFN));
+
+            const contextTagFragment = new DocumentFragment();
+            contextTagFragment.appendChild(createMenuItem("QBT_TR(Add...)QBT_TR[CONTEXT=TransferListWidget]", "images/list-add.svg", torrentAddTagsFN));
+            contextTagFragment.appendChild(createMenuItem("QBT_TR(Remove All)QBT_TR[CONTEXT=TransferListWidget]", "images/edit-clear.svg", torrentRemoveAllTagsFN));
 
             const sortedTags = [...tags.keys()];
             sortedTags.sort(window.qBittorrent.Misc.naturalSortCollator.compare);
@@ -574,8 +577,9 @@ window.qBittorrent.ContextMenu ??= (() => {
                 if (i === 0)
                     setTagItem.classList.add("separator");
 
-                contextTagList.appendChild(setTagItem);
+                contextTagFragment.appendChild(setTagItem);
             }
+            contextTagList.replaceChildren(contextTagFragment);
         }
     };
 

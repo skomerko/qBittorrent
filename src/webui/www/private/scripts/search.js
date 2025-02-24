@@ -187,7 +187,7 @@ window.qBittorrent.Search ??= (() => {
         closeTabElem.addEventListener("click", function(e) {
             e.stopPropagation();
             closeSearchTab(this);
-        });
+        }, { once: true });
 
         tabElem.prepend(closeTabElem);
         tabElem.appendChild(getStatusIconElement("QBT_TR(Searching...)QBT_TR[CONTEXT=SearchJobWidget]", "images/queued.svg"));
@@ -195,8 +195,8 @@ window.qBittorrent.Search ??= (() => {
         const listItem = document.createElement("li");
         listItem.id = newTabId;
         listItem.classList.add("selected", "searchTab");
-        listItem.addEventListener("click", (e) => {
-            setActiveTab(listItem);
+        listItem.addEventListener("click", function(e) {
+            setActiveTab(this);
             document.getElementById("startSearchButton").lastChild.textContent = "QBT_TR(Search)QBT_TR[CONTEXT=SearchEngineWidget]";
         });
         listItem.appendChild(tabElem);
@@ -248,7 +248,7 @@ window.qBittorrent.Search ??= (() => {
         if (state && state.running)
             stopSearch(searchId);
 
-        tab.destroy();
+        tab.remove();
 
         fetch("api/v2/search/delete", {
             method: "POST",
