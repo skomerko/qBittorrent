@@ -186,6 +186,16 @@ window.addEventListener("DOMContentLoaded", () => {
         LocalPreferences.set("properties_height_rel", properties_height_rel);
     };
 
+    const updateFilterSidebar = () => {
+        const isSidebarEnabled = LocalPreferences.get("show_filters_sidebar", "true") === "true";
+        const isTransfersTabEnabled = document.getElementById("transfersTabLink").classList.contains("selected");
+        const showSidebar = isSidebarEnabled && isTransfersTabEnabled;
+        document.querySelector("#showFiltersSidebarLink img").style.opacity = isSidebarEnabled ? "1" : "0";
+        document.getElementById("filtersColumn").classList.toggle("invisible", !showSidebar);
+        document.getElementById("filtersColumn_handle").classList.toggle("invisible", !showSidebar);
+        MochaUI.Desktop.setDesktopSize();
+    };
+
     window.addEventListener("resize", window.qBittorrent.Misc.createDebounceHandler(500, (e) => {
         // only save sizes if the columns are visible
         if (!$("mainColumn").classList.contains("invisible"))
@@ -351,14 +361,6 @@ window.addEventListener("DOMContentLoaded", () => {
     if (!showStatusBar) {
         $("showStatusBarLink").firstElementChild.style.opacity = "0";
         $("desktopFooterWrapper").classList.add("invisible");
-    }
-
-    // Show Filters Sidebar is enabled by default
-    let showFiltersSidebar = LocalPreferences.get("show_filters_sidebar", "true") === "true";
-    if (!showFiltersSidebar) {
-        $("showFiltersSidebarLink").firstElementChild.style.opacity = "0";
-        $("filtersColumn").classList.add("invisible");
-        $("filtersColumn_handle").classList.add("invisible");
     }
 
     let speedInTitle = LocalPreferences.get("speed_in_browser_title_bar") === "true";
@@ -1160,20 +1162,10 @@ window.addEventListener("DOMContentLoaded", () => {
         registerMagnetHandler();
     });
 
-    $("showFiltersSidebarLink").addEventListener("click", (e) => {
-        showFiltersSidebar = !showFiltersSidebar;
+    document.getElementById("showFiltersSidebarLink").addEventListener("click", (e) => {
+        const showFiltersSidebar = !(LocalPreferences.get("show_filters_sidebar", "true") === "true");
         LocalPreferences.set("show_filters_sidebar", showFiltersSidebar.toString());
-        if (showFiltersSidebar) {
-            $("showFiltersSidebarLink").firstElementChild.style.opacity = "1";
-            $("filtersColumn").classList.remove("invisible");
-            $("filtersColumn_handle").classList.remove("invisible");
-        }
-        else {
-            $("showFiltersSidebarLink").firstElementChild.style.opacity = "0";
-            $("filtersColumn").classList.add("invisible");
-            $("filtersColumn_handle").classList.add("invisible");
-        }
-        MochaUI.Desktop.setDesktopSize();
+        updateFilterSidebar();
     });
 
     $("speedInBrowserTitleBarLink").addEventListener("click", (e) => {
@@ -1257,11 +1249,7 @@ window.addEventListener("DOMContentLoaded", () => {
     // main window tabs
 
     const showTransfersTab = () => {
-        const showFiltersSidebar = LocalPreferences.get("show_filters_sidebar", "true") === "true";
-        if (showFiltersSidebar) {
-            $("filtersColumn").classList.remove("invisible");
-            $("filtersColumn_handle").classList.remove("invisible");
-        }
+        updateFilterSidebar();
         $("mainColumn").classList.remove("invisible");
         $("torrentsFilterToolbar").classList.remove("invisible");
 
@@ -1276,8 +1264,7 @@ window.addEventListener("DOMContentLoaded", () => {
     };
 
     const hideTransfersTab = () => {
-        $("filtersColumn").classList.add("invisible");
-        $("filtersColumn_handle").classList.add("invisible");
+        updateFilterSidebar();
         $("mainColumn").classList.add("invisible");
         $("torrentsFilterToolbar").classList.add("invisible");
         MochaUI.Desktop.resizePanels();
