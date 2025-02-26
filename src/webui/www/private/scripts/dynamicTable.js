@@ -93,6 +93,22 @@ window.qBittorrent.DynamicTable ??= (() => {
             this.setupAltRow();
         },
 
+        createTemplateTr: function() {
+            const tr = document.createElement("tr");
+            // set tabindex so element receives keydown events
+            // more info: https://developer.mozilla.org/en-US/docs/Web/API/Element/keydown_event
+            tr.tabIndex = -1;
+
+            for (const column of this.columns) {
+                const td = document.createElement("td");
+                if ((column.visible === "0") || column.force_hide)
+                    td.classList.add("invisible");
+                tr.append(td);
+            }
+
+            this.templateTr = tr;
+        },
+
         setupCommonEvents: function() {
             const tableFixedHeaderDiv = $(this.dynamicTableFixedHeaderDivId);
 
@@ -570,22 +586,24 @@ window.qBittorrent.DynamicTable ??= (() => {
         },
 
         loadColumnsOrder: function() {
-            const columnsOrder = [];
             const val = LocalPreferences.get(`columns_order_${this.dynamicTableDivId}`);
-            if ((val === null) || (val === undefined))
-                return;
-            val.split(",").forEach((v) => {
-                if ((v in this.columns) && (!columnsOrder.contains(v)))
-                    columnsOrder.push(v);
-            });
+            if (val) {
+                const columnsOrder = [];
+                val.split(",").forEach((v) => {
+                    if ((v in this.columns) && (!columnsOrder.contains(v)))
+                        columnsOrder.push(v);
+                });
 
-            for (let i = 0; i < this.columns.length; ++i) {
-                if (!columnsOrder.contains(this.columns[i].name))
-                    columnsOrder.push(this.columns[i].name);
+                for (let i = 0; i < this.columns.length; ++i) {
+                    if (!columnsOrder.contains(this.columns[i].name))
+                        columnsOrder.push(this.columns[i].name);
+                }
+
+                for (let i = 0; i < this.columns.length; ++i)
+                    this.columns[i] = this.columns[columnsOrder[i]];
             }
 
-            for (let i = 0; i < this.columns.length; ++i)
-                this.columns[i] = this.columns[columnsOrder[i]];
+            this.createTemplateTr();
         },
 
         saveColumnsOrder: function() {
@@ -642,6 +660,8 @@ window.qBittorrent.DynamicTable ??= (() => {
                 if (updateCellData)
                     column.updateTd(td, this.rows.get(tr.rowId));
             }
+
+            this.createTemplateTr();
         },
 
         getSortedColumn: function() {
@@ -770,20 +790,16 @@ window.qBittorrent.DynamicTable ??= (() => {
 
             if (!this.rows.has(rowId)) {
                 row = {
-                    full_data: {},
+                    full_data: data,
+                    data: {},
                     rowId: rowId
                 };
                 this.rows.set(rowId, row);
             }
             else {
                 row = this.rows.get(rowId);
-            }
-
-            row["data"] = data;
-            for (const x in data) {
-                if (!Object.hasOwn(data, x))
-                    continue;
-                row["full_data"][x] = data[x];
+                row["data"] = data;
+                Object.assign(row["full_data"], data);
             }
         },
 
@@ -853,22 +869,7 @@ window.qBittorrent.DynamicTable ??= (() => {
                     this.updateRow(trs[rowPos], fullUpdate);
                 }
                 else { // else create a new row in the table
-                    const tr = document.createElement("tr");
-                    // set tabindex so element receives keydown events
-                    // more info: https://developer.mozilla.org/en-US/docs/Web/API/Element/keydown_event
-                    tr.tabIndex = -1;
-
-                    const rowId = rows[rowPos]["rowId"];
-                    tr.setAttribute("data-row-id", rowId);
-                    tr["rowId"] = rowId;
-
-                    for (let k = 0; k < this.columns.length; ++k) {
-                        const td = document.createElement("td");
-                        if ((this.columns[k].visible === "0") || this.columns[k].force_hide)
-                            td.classList.add("invisible");
-                        tr.append(td);
-                    }
-
+                    const tr = this.createRow(rowId);
                     // Insert
                     if (rowPos >= trs.length) {
                         tr.inject(this.tableBody);
@@ -878,11 +879,6 @@ window.qBittorrent.DynamicTable ??= (() => {
                         tr.inject(trs[rowPos], "before");
                         trs.splice(rowPos, 0, tr);
                     }
-
-                    // Update context menu
-                    this.contextMenu?.addTarget(tr);
-
-                    this.updateRow(tr, true);
                 }
             }
 
@@ -902,6 +898,20 @@ window.qBittorrent.DynamicTable ??= (() => {
                     this.columns[i].updateTd(tds[i], row);
             }
             row["data"] = {};
+        },
+
+        createRow: function(rowId) {
+            const row = this.rows.get(rowId);
+            const tr = this.templateTr.cloneNode(true);
+            tr.dataset.rowId = rowId;
+            tr.rowId = rowId;
+
+            for (let i = 0; i < this.columns.length; ++i)
+                this.columns[i].updateTd(tr.cells[i], row);
+
+            this.contextMenu?.addTarget(tr);
+
+            return tr;
         },
 
         removeRow: function(rowId) {
@@ -1244,7 +1254,7 @@ window.qBittorrent.DynamicTable ??= (() => {
                 }
                 else {
                     if (progressColumnWidth < 0)
-                        progressColumnWidth = td.offsetWidth;
+                        progressColumnWidth = this.width;
                     td.append(new window.qBittorrent.ProgressBar.ProgressBar(progressFormatted, {
                         width: progressColumnWidth - 5
                     }));
@@ -1258,7 +1268,7 @@ window.qBittorrent.DynamicTable ??= (() => {
                 for (const tr of this.getTrs()) {
                     const td = this.getRowCells(tr)[pos];
                     if (progressColumnWidth < 0)
-                        progressColumnWidth = td.offsetWidth;
+                        progressColumnWidth = this.columns[columnName].width;
                     td.resized = true;
                     this.columns[columnName].updateTd(td, this.getRow(tr.rowId));
                 }
@@ -3540,7 +3550,7 @@ window.qBittorrent.DynamicTable ??= (() => {
                 }
                 else {
                     if (progressColumnWidth < 0)
-                        progressColumnWidth = td.offsetWidth;
+                        progressColumnWidth = this.width;
                     td.append(new window.qBittorrent.ProgressBar.ProgressBar(progress, {
                         width: progressColumnWidth - 5
                     }));
@@ -3554,7 +3564,7 @@ window.qBittorrent.DynamicTable ??= (() => {
                 for (const tr of this.getTrs()) {
                     const td = this.getRowCells(tr)[pos];
                     if (progressColumnWidth < 0)
-                        progressColumnWidth = td.offsetWidth;
+                        progressColumnWidth = this.columns[columnName].width;
                     td.resized = true;
                     this.columns[columnName].updateTd(td, this.getRow(tr.rowId));
                 }
