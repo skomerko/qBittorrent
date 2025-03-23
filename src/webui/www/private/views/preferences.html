@@ -2128,8 +2128,6 @@ Use ';' to split multiple entries. Can use wildcard '*'.)QBT_TR[CONTEXT=OptionsD
 
         // Advanced Tab
         const updateNetworkInterfaces = (default_iface, default_iface_name) => {
-            [...document.getElementById("networkInterface").children].forEach((el) => { el.destroy(); });
-
             fetch("api/v2/app/networkInterfaceList", {
                     method: "GET",
                     cache: "no-store"
@@ -2148,17 +2146,16 @@ Use ';' to split multiple entries. Can use wildcard '*'.)QBT_TR[CONTEXT=OptionsD
                     if (default_iface && !ifaces.some((item) => item.value === default_iface))
                         ifaces.push({ name: default_iface_name || default_iface, value: default_iface });
 
-                    $("networkInterface").options.add(new Option("QBT_TR(Any interface)QBT_TR[CONTEXT=OptionsDialog]", ""));
-                    ifaces.forEach((item, index) => {
-                        $("networkInterface").options.add(new Option(item.name, item.value));
-                    });
-                    $("networkInterface").value = default_iface;
+                    const select = document.getElementById("networkInterface");
+                    select.replaceChildren(
+                        new Option("QBT_TR(Any interface)QBT_TR[CONTEXT=OptionsDialog]", ""),
+                        ...ifaces.map((item) => new Option(item.name, item.value))
+                    );
+                    select.value = default_iface;
                 });
         };
 
         const updateInterfaceAddresses = (iface, default_addr) => {
-            [...document.getElementById("optionalIPAddressToBind").children].forEach((el) => { el.destroy(); });
-
             const url = new URL("api/v2/app/networkInterfaceAddressList", window.location);
             url.search = new URLSearchParams({
                 iface: iface
@@ -2177,13 +2174,14 @@ Use ';' to split multiple entries. Can use wildcard '*'.)QBT_TR[CONTEXT=OptionsD
                     if (!addresses)
                         return;
 
-                    $("optionalIPAddressToBind").options.add(new Option("QBT_TR(All addresses)QBT_TR[CONTEXT=OptionDialog]", ""));
-                    $("optionalIPAddressToBind").options.add(new Option("QBT_TR(All IPv4 addresses)QBT_TR[CONTEXT=OptionDialog]", "0.0.0.0"));
-                    $("optionalIPAddressToBind").options.add(new Option("QBT_TR(All IPv6 addresses)QBT_TR[CONTEXT=OptionDialog]", "::"));
-                    addresses.forEach((item, index) => {
-                        $("optionalIPAddressToBind").options.add(new Option(item, item));
-                    });
-                    $("optionalIPAddressToBind").value = default_addr;
+                    const select = document.getElementById("optionalIPAddressToBind");
+                    select.replaceChildren(
+                        new Option("QBT_TR(All addresses)QBT_TR[CONTEXT=OptionDialog]", ""),
+                        new Option("QBT_TR(All IPv4 addresses)QBT_TR[CONTEXT=OptionDialog]", "0.0.0.0"),
+                        new Option("QBT_TR(All IPv6 addresses)QBT_TR[CONTEXT=OptionDialog]", "::"),
+                        ...addresses.map((item) => new Option(item, item))
+                    );
+                    select.value = default_addr;
                 });
         };
 
