@@ -215,7 +215,7 @@
             const pref = window.parent.qBittorrent.Cache.preferences.get();
 
             if (!pref.rss_processing_enabled)
-                $("rssFetchingDisabled").classList.remove("invisible");
+                document.getElementById("rssFetchingDisabled").classList.remove("invisible");
 
             const rssFeedContextMenu = new window.qBittorrent.ContextMenu.RssFeedContextMenu({
                 targets: "#rssFeedTableDiv tbody tr",
@@ -260,13 +260,13 @@
                 }
             });
 
-            rssFeedContextMenu.addTarget($("rssFeedTableDiv"));
+            rssFeedContextMenu.addTarget(document.getElementById("rssFeedTableDiv"));
             // deselect feed when clicking on empty part of table
-            $("rssFeedTableDiv").addEventListener("click", (e) => {
+            document.getElementById("rssFeedTableDiv").addEventListener("click", (e) => {
                 rssFeedTable.deselectAll();
                 rssFeedTable.deselectRow();
             });
-            $("rssFeedTableDiv").addEventListener("contextmenu", (e) => {
+            document.getElementById("rssFeedTableDiv").addEventListener("contextmenu", (e) => {
                 if (e.target.nodeName === "DIV") {
                     rssFeedTable.deselectAll();
                     rssFeedTable.deselectRow();
@@ -431,13 +431,13 @@
 
             const article = feedData[feedUid].filter((article) => article.id === articleID)[0];
             if (article) {
-                $("rssDetailsView").append((() => {
+                document.getElementById("rssDetailsView").append((() => {
                     const torrentName = document.createElement("p");
                     torrentName.textContent = article.title;
                     torrentName.id = "rssTorrentDetailsName";
                     return torrentName;
                 })());
-                $("rssDetailsView").append((() => {
+                document.getElementById("rssDetailsView").append((() => {
                     const torrentDate = document.createElement("div");
                     torrentDate.id = "rssTorrentDetailsDate";
 
@@ -453,7 +453,7 @@
                 })());
                 // Place in iframe with sandbox attribute to prevent js execution
                 const torrentDescription = document.createRange().createContextualFragment('<iframe sandbox id="rssDescription"></iframe>');
-                $("rssDetailsView").append(torrentDescription);
+                document.getElementById("rssDetailsView").append(torrentDescription);
                 document.getElementById("rssDescription").srcdoc = `<html><head><link rel="stylesheet" type="text/css" href="css/style.css"></head><body>${article.description}</body></html>`;
             }
         };
