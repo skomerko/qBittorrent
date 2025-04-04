@@ -127,7 +127,8 @@ window.qBittorrent.Client.setup();
 // TODO: move global functions/variables into some namespace/scope
 
 this.torrentsTable = new window.qBittorrent.DynamicTable.TorrentsTable();
-
+// Mootols $ alias is used to keep compatibility with MochaUI
+const $ = (id) => document.getElementById(id) ?? this.$(id);
 let updatePropertiesPanel = () => {};
 
 this.updateMainData = () => {};
