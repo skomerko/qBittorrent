@@ -313,7 +313,7 @@ window.addEventListener("DOMContentLoaded", () => {
     };
 
     toggleFilterDisplay = (filterListID) => {
-        const filterList = document.getElementById(filterListID);
+        const filterList = $(filterListID);
         const filterTitle = filterList.previousElementSibling;
         const toggleIcon = filterTitle.firstElementChild;
         toggleIcon.classList.toggle("rotate");
@@ -457,7 +457,7 @@ window.addEventListener("DOMContentLoaded", () => {
     };
 
     const updateFilter = (filter, filterTitle) => {
-        const filterEl = document.getElementById(`${filter}_filter`);
+        const filterEl = $(`${filter}_filter`);
         const filterTorrentCount = torrentsTable.getFilteredTorrentsNumber(filter, CATEGORIES_ALL, TAGS_ALL, TRACKERS_ALL);
         if (useAutoHideZeroStatusFilters) {
             const hideFilter = (filterTorrentCount === 0) && (filter !== "all");
@@ -485,20 +485,20 @@ window.addEventListener("DOMContentLoaded", () => {
     };
 
     const highlightSelectedStatus = () => {
-        const statusFilter = document.getElementById("statusFilterList");
+        const statusFilter = $("statusFilterList");
         const filterID = `${selectedStatus}_filter`;
         for (const status of statusFilter.children)
             status.classList.toggle("selectedFilter", (status.id === filterID));
     };
 
     const updateCategoryList = () => {
-        const categoryList = document.getElementById("categoryFilterList");
+        const categoryList = $("categoryFilterList");
         if (!categoryList)
             return;
 
         [...categoryList.children].forEach((el) => { el.destroy(); });
 
-        const categoryItemTemplate = document.getElementById("categoryFilterItem");
+        const categoryItemTemplate = $("categoryFilterItem");
 
         const createLink = (category, text, count) => {
             const categoryFilterItem = categoryItemTemplate.content.cloneNode(true).firstElementChild;
@@ -604,7 +604,7 @@ window.addEventListener("DOMContentLoaded", () => {
     };
 
     const highlightSelectedCategory = () => {
-        const categoryList = document.getElementById("categoryFilterList");
+        const categoryList = $("categoryFilterList");
         if (!categoryList)
             return;
 
@@ -619,7 +619,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
         [...tagFilterList.children].forEach((el) => { el.destroy(); });
 
-        const tagItemTemplate = document.getElementById("tagFilterItem");
+        const tagItemTemplate = $("tagFilterItem");
 
         const createLink = (tag, text, count) => {
             const tagFilterItem = tagItemTemplate.content.cloneNode(true).firstElementChild;
@@ -657,7 +657,7 @@ window.addEventListener("DOMContentLoaded", () => {
     };
 
     const highlightSelectedTag = () => {
-        const tagFilterList = document.getElementById("tagFilterList");
+        const tagFilterList = $("tagFilterList");
         if (!tagFilterList)
             return;
 
@@ -672,7 +672,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
         [...trackerFilterList.children].forEach((el) => { el.destroy(); });
 
-        const trackerItemTemplate = document.getElementById("trackerFilterItem");
+        const trackerItemTemplate = $("trackerFilterItem");
 
         const createLink = (host, text, count) => {
             const trackerFilterItem = trackerItemTemplate.content.cloneNode(true).firstElementChild;
@@ -716,7 +716,7 @@ window.addEventListener("DOMContentLoaded", () => {
     };
 
     const highlightSelectedTracker = () => {
-        const trackerFilterList = document.getElementById("trackerFilterList");
+        const trackerFilterList = $("trackerFilterList");
         if (!trackerFilterList)
             return;
 
@@ -977,7 +977,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
         $("freeSpaceOnDisk").textContent = "QBT_TR(Free space: %1)QBT_TR[CONTEXT=HttpServer]".replace("%1", window.qBittorrent.Misc.friendlyUnit(serverState.free_space_on_disk));
 
-        const externalIPsElement = document.getElementById("externalIPs");
+        const externalIPsElement = $("externalIPs");
         if (window.qBittorrent.Cache.preferences.get().status_bar_external_ip) {
             const lastExternalAddressV4 = serverState.last_external_address_v4;
             const lastExternalAddressV6 = serverState.last_external_address_v6;
@@ -999,7 +999,7 @@ window.addEventListener("DOMContentLoaded", () => {
             externalIPsElement.previousElementSibling.classList.add("invisible");
         }
 
-        const dhtElement = document.getElementById("DHTNodes");
+        const dhtElement = $("DHTNodes");
         if (window.qBittorrent.Cache.preferences.get().dht) {
             dhtElement.textContent = "QBT_TR(DHT: %1 nodes)QBT_TR[CONTEXT=StatusBar]".replace("%1", serverState.dht_nodes);
             dhtElement.classList.remove("invisible");
@@ -1011,7 +1011,7 @@ window.addEventListener("DOMContentLoaded", () => {
         }
 
         // Statistics dialog
-        if (document.getElementById("statisticsContent")) {
+        if ($("statisticsContent")) {
             $("AlltimeDL").textContent = window.qBittorrent.Misc.friendlyUnit(serverState.alltime_dl, false);
             $("AlltimeUL").textContent = window.qBittorrent.Misc.friendlyUnit(serverState.alltime_ul, false);
             $("TotalWastedSession").textContent = window.qBittorrent.Misc.friendlyUnit(serverState.total_wasted_session, false);
@@ -1600,12 +1600,12 @@ window.addEventListener("DOMContentLoaded", () => {
                 updatePropertiesPanel();
 
                 const showFilesFilter = (selectedTab.id === "propFilesLink") && !this.isCollapsed;
-                document.getElementById("torrentFilesFilterToolbar").classList.toggle("invisible", !showFilesFilter);
+                $("torrentFilesFilterToolbar").classList.toggle("invisible", !showFilesFilter);
             });
 
             const showFilesFilter = (lastUsedTab === "propFilesLink") && !this.isCollapsed;
             if (showFilesFilter)
-                document.getElementById("torrentFilesFilterToolbar").classList.remove("invisible");
+                $("torrentFilesFilterToolbar").classList.remove("invisible");
         },
         column: "mainColumn",
         height: prop_h
@@ -1621,7 +1621,7 @@ window.addEventListener("DOMContentLoaded", () => {
         }, window.qBittorrent.Misc.FILTER_INPUT_DELAY);
     });
 
-    document.getElementById("torrentsFilterToolbar").addEventListener("change", (e) => { torrentsTable.updateTable(); });
+    $("torrentsFilterToolbar").addEventListener("change", (e) => { torrentsTable.updateTable(); });
 
     $("transfersTabLink").addEventListener("click", () => { showTransfersTab(); });
     $("searchTabLink").addEventListener("click", () => { showSearchTab(); });
